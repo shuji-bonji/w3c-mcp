@@ -3,10 +3,6 @@
 /**
  * W3C MCP Server
  * Provides access to W3C/WHATWG/IETF web specifications via MCP protocol
- *
- * Performance improvements:
- * - Preload data at startup
- * - Warm cache before handling requests
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -25,6 +21,25 @@ import { getElements, searchElement, listElementSpecs } from './tools/get-elemen
 import { getPwaSpecs, getCorePwaSpecs } from './tools/get-pwa-specs.js';
 import { preloadAll } from './data/loader.js';
 
+// Validation schemas
+import {
+  ListSpecsSchema,
+  GetSpecSchema,
+  SearchSpecsSchema,
+  GetWebIDLSchema,
+  GetCSSPropertiesSchema,
+  GetElementsSchema,
+  GetPwaSpecsSchema,
+  GetSpecDependenciesSchema,
+  validateInput
+} from './schemas/index.js';
+
+// Error handling
+import { formatErrorResponse, ValidationError } from './errors/index.js';
+
+// Logging
+import { info, debug, logToolCall, logToolResult, PerformanceTimer } from './utils/logger.js';
+
 const server = new Server(
   {
     name: 'w3c-mcp-server',
@@ -40,7 +55,6 @@ const server = new Server(
 // Tool definitions
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
-    // Phase 1: Basic tools
     {
       name: 'list_w3c_specs',
       description: 'List W3C/WHATWG/IETF web specifications with optional filtering by organization, keyword, or category',
@@ -99,8 +113,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: ['query']
       }
     },
-
-    // Phase 2: WebIDL, CSS, Elements
     {
       name: 'get_webidl',
       description: 'Get WebIDL interface definitions for a specification. WebIDL defines the JavaScript APIs.',
@@ -173,8 +185,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         properties: {}
       }
     },
-
-    // Phase 3: PWA and convenience tools
     {
       name: 'get_pwa_specs',
       description: 'Get all Progressive Web App (PWA) related specifications including Service Worker, Web App Manifest, Push API, Background Sync, etc.',
@@ -205,118 +215,132 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
   ]
 }));
 
-// Tool execution
+// Tool execution with validation and error handling
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
+  const timer = new PerformanceTimer(`tool:${name}`);
+
+  logToolCall(name, args);
 
   try {
+    let result: unknown;
+
     switch (name) {
-      // Phase 1
       case 'list_w3c_specs': {
-        const result = await listSpecs({
-          organization: args?.organization as 'W3C' | 'WHATWG' | 'IETF' | 'all' | undefined,
-          keyword: args?.keyword as string | undefined,
-          category: args?.category as string | undefined,
-          limit: args?.limit as number | undefined
-        });
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        const validation = validateInput(ListSpecsSchema, args);
+        if (!validation.success) throw new ValidationError(validation.error);
+        result = await listSpecs(validation.data);
+        break;
       }
 
       case 'get_w3c_spec': {
-        const result = await getSpec(args?.shortname as string);
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        const validation = validateInput(GetSpecSchema, args);
+        if (!validation.success) throw new ValidationError(validation.error);
+        result = await getSpec(validation.data.shortname);
+        break;
       }
 
       case 'search_w3c_specs': {
-        const result = await searchSpecs(
-          args?.query as string,
-          args?.limit as number | undefined
-        );
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        const validation = validateInput(SearchSpecsSchema, args);
+        if (!validation.success) throw new ValidationError(validation.error);
+        result = await searchSpecs(validation.data.query, validation.data.limit);
+        break;
       }
 
-      // Phase 2
       case 'get_webidl': {
-        const result = await getWebIDL(args?.shortname as string);
-        return { content: [{ type: 'text', text: result }] };
+        const validation = validateInput(GetWebIDLSchema, args);
+        if (!validation.success) throw new ValidationError(validation.error);
+        const idl = await getWebIDL(validation.data.shortname);
+        timer.end();
+        logToolResult(name, idl.length);
+        return { content: [{ type: 'text', text: idl }] };
       }
 
       case 'list_webidl_specs': {
-        const result = await listWebIDLSpecs();
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        result = await listWebIDLSpecs();
+        break;
       }
 
       case 'get_css_properties': {
-        let result;
-        if (args?.property) {
-          result = await searchCSSProperty(args.property as string);
-        } else {
-          result = await getCSSProperties(args?.spec as string | undefined);
-        }
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        const validation = validateInput(GetCSSPropertiesSchema, args);
+        if (!validation.success) throw new ValidationError(validation.error);
+        result = validation.data.property
+          ? await searchCSSProperty(validation.data.property)
+          : await getCSSProperties(validation.data.spec);
+        break;
       }
 
       case 'list_css_specs': {
-        const result = await listCSSSpecs();
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        result = await listCSSSpecs();
+        break;
       }
 
       case 'get_html_elements': {
-        let result;
-        if (args?.element) {
-          result = await searchElement(args.element as string);
-        } else {
-          result = await getElements(args?.spec as string | undefined);
-        }
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        const validation = validateInput(GetElementsSchema, args);
+        if (!validation.success) throw new ValidationError(validation.error);
+        result = validation.data.element
+          ? await searchElement(validation.data.element)
+          : await getElements(validation.data.spec);
+        break;
       }
 
       case 'list_element_specs': {
-        const result = await listElementSpecs();
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        result = await listElementSpecs();
+        break;
       }
 
-      // Phase 3
       case 'get_pwa_specs': {
-        const result = args?.coreOnly
+        const validation = validateInput(GetPwaSpecsSchema, args);
+        if (!validation.success) throw new ValidationError(validation.error);
+        result = validation.data.coreOnly
           ? await getCorePwaSpecs()
           : await getPwaSpecs();
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        break;
       }
 
       case 'get_spec_dependencies': {
-        const result = await getSpecDependencies(args?.shortname as string);
-        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        const validation = validateInput(GetSpecDependenciesSchema, args);
+        if (!validation.success) throw new ValidationError(validation.error);
+        result = await getSpecDependencies(validation.data.shortname);
+        break;
       }
 
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
+
+    const text = JSON.stringify(result, null, 2);
+    timer.end();
+    logToolResult(name, text.length);
+    
+    return { content: [{ type: 'text', text }] };
+    
   } catch (error) {
+    timer.end();
+    const formatted = formatErrorResponse(error);
     return {
-      content: [{
-        type: 'text',
-        text: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`
-      }],
+      content: [{ type: 'text', text: formatted.text }],
       isError: true
     };
   }
 });
 
-// Start server with preloading
+// Start server
 async function main() {
-  // Preload all data in parallel for better first-request performance
-  console.error('W3C MCP Server: Preloading data...');
-  const startTime = Date.now();
-
+  info('W3C MCP Server: Preloading data...');
+  const timer = new PerformanceTimer('preload');
+  
   await preloadAll();
-
-  const loadTime = Date.now() - startTime;
-  console.error(`W3C MCP Server: Data loaded in ${loadTime}ms`);
-
+  
+  const loadTime = timer.end();
+  info(`W3C MCP Server: Data loaded in ${loadTime}ms`);
+  
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('W3C MCP Server running on stdio');
+  info('W3C MCP Server running on stdio');
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
+});

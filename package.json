@@ -1,53 +1,53 @@
 {
-  "name": "@shuji-bonji/w3c-mcp-server",
-  "version": "0.1.0",
-  "description": "MCP Server for accessing W3C Web specifications",
-  "type": "module",
-  "main": "dist/index.js",
-  "bin": {
-    "w3c-mcp-server": "dist/index.js"
-  },
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "start": "node dist/index.js",
-    "prepare": "npm run build"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
-    "web-specs": "latest",
-    "@webref/idl": "latest",
-    "@webref/css": "latest",
-    "@webref/elements": "latest",
-    "zod": "^3.23.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.5.0"
-  },
-  "keywords": [
-    "mcp",
-    "w3c",
-    "web-specs",
-    "webref",
-    "pwa",
-    "service-worker",
-    "web-standards"
-  ],
-  "author": "shuji-bonji",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shuji-bonji/w3c-mcp-server.git"
-  },
-  "bugs": {
-    "url": "https://github.com/shuji-bonji/w3c-mcp-server/issues"
-  },
-  "homepage": "https://github.com/shuji-bonji/w3c-mcp-server#readme",
-  "files": [
-    "dist"
-  ],
-  "engines": {
-    "node": ">=18.0.0"
-  }
+	"name": "@shuji-bonji/w3c-mcp-server",
+	"version": "0.2.3",
+	"description": "MCP Server for accessing W3C Web specifications",
+	"type": "module",
+	"main": "dist/index.js",
+	"bin": {
+		"w3c-mcp-server": "dist/index.js"
+	},
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsc --watch",
+		"start": "node dist/index.js",
+		"prepare": "npm run build"
+	},
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.0.0",
+		"web-specs": "latest",
+		"@webref/idl": "latest",
+		"@webref/css": "latest",
+		"@webref/elements": "latest",
+		"zod": "^3.23.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"typescript": "^5.5.0"
+	},
+	"keywords": [
+		"mcp",
+		"w3c",
+		"web-specs",
+		"webref",
+		"pwa",
+		"service-worker",
+		"web-standards"
+	],
+	"author": "shuji-bonji",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/shuji-bonji/w3c-mcp-server.git"
+	},
+	"bugs": {
+		"url": "https://github.com/shuji-bonji/w3c-mcp-server/issues"
+	},
+	"homepage": "https://github.com/shuji-bonji/w3c-mcp-server#readme",
+	"files": [
+		"dist"
+	],
+	"engines": {
+		"node": ">=18.0.0"
+	}
 }

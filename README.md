@@ -173,6 +173,54 @@ These packages are maintained by the W3C and provide machine-readable data extra
 - https://github.com/w3c/browser-specs
 - https://github.com/w3c/webref
 
+## Debug Mode
+
+Enable debug logging with environment variables:
+
+```bash
+# Enable debug logging
+W3C_MCP_DEBUG=true npx @shuji-bonji/w3c-mcp-server
+
+# Enable performance logging only
+W3C_MCP_PERF=true npx @shuji-bonji/w3c-mcp-server
+```
+
+Debug output includes:
+- Tool call arguments
+- Execution timing
+- Data loading performance
+
+## Architecture
+
+```
+src/
+├── index.ts          # MCP server entry point
+├── data/
+│   └── loader.ts     # Data loading with caching
+├── tools/            # Tool implementations
+│   ├── list-specs.ts
+│   ├── get-spec.ts
+│   ├── search-specs.ts
+│   ├── get-webidl.ts
+│   ├── get-css.ts
+│   ├── get-elements.ts
+│   └── get-pwa-specs.ts
+├── schemas/
+│   └── index.ts      # Zod validation schemas
+├── errors/
+│   └── index.ts      # Custom error classes
+├── utils/
+│   └── logger.ts     # Debug logging utilities
+└── types/
+    └── index.ts      # TypeScript type definitions
+```
+
+### Performance
+
+- **Startup**: ~70ms parallel preloading of all data
+- **Spec Lookup**: O(1) using Map-based index
+- **Search**: Optimized with early termination on exact matches
+
 ## Development
 
 ```bash
@@ -188,6 +236,9 @@ npm run build
 
 # Run in development mode
 npm run dev
+
+# Run with debug logging
+W3C_MCP_DEBUG=true npm start
 ```
 
 ## License

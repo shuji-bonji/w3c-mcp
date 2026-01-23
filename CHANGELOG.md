@@ -5,7 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2024-01-24
+## [0.2.0] - 2025-01-24
+
+### Added
+
+- **Zod Input Validation**: Type-safe validation for all tool inputs with structured error responses
+- **Custom Error Classes**: `SpecNotFoundError`, `WebIDLNotFoundError`, `CSSNotFoundError`, `ElementsNotFoundError`, `ValidationError` with helpful suggestions
+- **Debug Logging**: Environment-based logging controlled by `W3C_MCP_DEBUG=true`
+- **Performance Logging**: Timing information for tool calls with `W3C_MCP_PERF=true`
+- **CI/CD Pipeline**: GitHub Actions workflow for Node.js 18/20/22 with automatic npm publishing
+
+### Changed
+
+- Structured error responses with JSON format including error type, message, and suggestions
+- Improved error messages for not-found scenarios
+
+### Performance
+
+- Promise-based singleton caching prevents duplicate data loads
+- Map-based spec index for O(1) lookups (previously O(n))
+- Parallel data preloading at server startup (~70ms total)
+- Optimized search with pre-compiled regex and early termination
+
+## [0.1.0] - 2025-01-24
 
 ### Added
 
