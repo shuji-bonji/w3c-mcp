@@ -3,6 +3,10 @@
 /**
  * W3C MCP Server
  * Provides access to W3C/WHATWG/IETF web specifications via MCP protocol
+ *
+ * Performance improvements:
+ * - Preload data at startup
+ * - Warm cache before handling requests
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -16,9 +20,10 @@ import { listSpecs } from './tools/list-specs.js';
 import { getSpec, getSpecDependencies } from './tools/get-spec.js';
 import { searchSpecs } from './tools/search-specs.js';
 import { getWebIDL, listWebIDLSpecs } from './tools/get-webidl.js';
-import { getCSSProperties, getCSSValues, searchCSSProperty, listCSSSpecs } from './tools/get-css.js';
+import { getCSSProperties, searchCSSProperty, listCSSSpecs } from './tools/get-css.js';
 import { getElements, searchElement, listElementSpecs } from './tools/get-elements.js';
 import { getPwaSpecs, getCorePwaSpecs } from './tools/get-pwa-specs.js';
+import { preloadAll } from './data/loader.js';
 
 const server = new Server(
   {
@@ -298,8 +303,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 });
 
-// Start server
+// Start server with preloading
 async function main() {
+  // Preload all data in parallel for better first-request performance
+  console.error('W3C MCP Server: Preloading data...');
+  const startTime = Date.now();
+
+  await preloadAll();
+
+  const loadTime = Date.now() - startTime;
+  console.error(`W3C MCP Server: Data loaded in ${loadTime}ms`);
+
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error('W3C MCP Server running on stdio');

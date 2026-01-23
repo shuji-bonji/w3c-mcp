@@ -1,5 +1,11 @@
 /**
  * Data loader for web-specs and webref packages
+ *
+ * Performance improvements:
+ * - Lazy loading with singleton pattern
+ * - Promise-based caching to prevent duplicate loads
+ * - Parallel loading support
+ * - Memory-efficient data structures
  */
 
 import { createRequire } from 'module';
@@ -7,81 +13,111 @@ import type { SpecDetail } from '../types/index.js';
 
 const require = createRequire(import.meta.url);
 
-// web-specs package provides a JSON array of all specs
-let specsCache: SpecDetail[] | null = null;
+// ============================================
+// Singleton cache with Promise-based loading
+// Prevents duplicate loads when multiple requests come in simultaneously
+// ============================================
 
+let specsPromise: Promise<SpecDetail[]> | null = null;
+let idlPromise: Promise<Record<string, string>> | null = null;
+let cssPromise: Promise<CSSData> | null = null;
+let elementsPromise: Promise<Record<string, ElementSpecData>> | null = null;
+
+// Shortname index for O(1) lookup
+let specsIndex: Map<string, SpecDetail> | null = null;
+let seriesIndex: Map<string, SpecDetail> | null = null;
+
+/**
+ * Load specs with singleton promise pattern
+ * Multiple simultaneous calls share the same loading promise
+ */
 export async function loadSpecs(): Promise<SpecDetail[]> {
-  if (specsCache) {
-    return specsCache;
+  if (!specsPromise) {
+    specsPromise = Promise.resolve().then(() => {
+      const specs = require('web-specs') as SpecDetail[];
+      // Build indices for faster lookup
+      buildSpecIndices(specs);
+      return specs;
+    });
   }
-
-  // Use require for JSON module (web-specs exports index.json)
-  specsCache = require('web-specs') as SpecDetail[];
-  return specsCache;
+  return specsPromise;
 }
 
-// Cache for WebIDL data
-let idlCache: Map<string, string> | null = null;
+/**
+ * Build indices for O(1) spec lookup by shortname
+ */
+function buildSpecIndices(specs: SpecDetail[]): void {
+  specsIndex = new Map();
+  seriesIndex = new Map();
 
-export async function loadWebIDL(): Promise<Map<string, string>> {
-  if (idlCache) {
-    return idlCache;
-  }
-
-  idlCache = new Map();
-
-  try {
-    // @webref/idl exports a function that returns parsed IDL
-    const webrefIdl = await import('@webref/idl');
-    const idlData = await webrefIdl.default.parseAll();
-
-    for (const [shortname, parsed] of Object.entries(idlData)) {
-      // parsed contains the IDL as a string or parsed object
-      if (typeof parsed === 'string') {
-        idlCache.set(shortname, parsed);
-      } else if (parsed && typeof parsed === 'object') {
-        // If it's parsed, we might need to get the raw IDL
-        const rawIdl = await webrefIdl.default.listAll();
-        if (rawIdl[shortname]) {
-          idlCache.set(shortname, rawIdl[shortname]);
-        }
+  for (const spec of specs) {
+    specsIndex.set(spec.shortname, spec);
+    if (spec.series?.shortname) {
+      // Only set if not already set (prefer exact match)
+      if (!seriesIndex.has(spec.series.shortname)) {
+        seriesIndex.set(spec.series.shortname, spec);
       }
     }
-  } catch (error) {
-    console.error('Error loading WebIDL:', error);
+  }
+}
+
+/**
+ * Find a spec by shortname - O(1) with index
+ */
+export async function findSpec(shortname: string): Promise<SpecDetail | undefined> {
+  await loadSpecs(); // Ensure indices are built
+
+  // Try exact match first (O(1))
+  if (specsIndex?.has(shortname)) {
+    return specsIndex.get(shortname);
   }
 
-  return idlCache;
+  // Try series shortname (O(1))
+  if (seriesIndex?.has(shortname)) {
+    return seriesIndex.get(shortname);
+  }
+
+  // Fallback to partial match (O(n) - only when necessary)
+  const specs = await loadSpecs();
+  return specs.find(s =>
+    s.shortname.includes(shortname) ||
+    shortname.includes(s.shortname)
+  );
 }
 
-interface IDLFile {
-  filename: string;
-  shortname: string;
-  path: string;
-}
-
+/**
+ * Load WebIDL with singleton promise pattern
+ */
 export async function loadWebIDLRaw(): Promise<Record<string, string>> {
-  try {
-    const { readFileSync } = await import('fs');
-    const webrefIdl = require('@webref/idl');
-    const idlFiles: Record<string, IDLFile> = await webrefIdl.listAll();
-
-    const result: Record<string, string> = {};
-    for (const [shortname, file] of Object.entries(idlFiles)) {
+  if (!idlPromise) {
+    idlPromise = (async () => {
       try {
-        result[shortname] = readFileSync(file.path, 'utf8');
-      } catch {
-        // Skip files that can't be read
+        const { readFileSync } = await import('fs');
+        const webrefIdl = require('@webref/idl');
+        const idlFiles = await webrefIdl.listAll();
+
+        const result: Record<string, string> = {};
+        for (const [shortname, file] of Object.entries(idlFiles)) {
+          try {
+            result[shortname] = readFileSync((file as any).path, 'utf8');
+          } catch {
+            // Skip files that can't be read
+          }
+        }
+        return result;
+      } catch (error) {
+        console.error('Error loading raw WebIDL:', error);
+        return {};
       }
-    }
-    return result;
-  } catch (error) {
-    console.error('Error loading raw WebIDL:', error);
-    return {};
+    })();
   }
+  return idlPromise;
 }
 
-// Cache for CSS data
+// ============================================
+// CSS Data Types
+// ============================================
+
 export interface CSSPropertyDef {
   name: string;
   href?: string;
@@ -102,25 +138,29 @@ export interface CSSData {
   atrules: Array<{ name: string; href?: string; value?: string }>;
 }
 
-let cssCache: CSSData | null = null;
-
+/**
+ * Load CSS data with singleton promise pattern
+ */
 export async function loadCSS(): Promise<CSSData> {
-  if (cssCache) {
-    return cssCache;
+  if (!cssPromise) {
+    cssPromise = (async () => {
+      try {
+        const webrefCss = require('@webref/css');
+        const data: CSSData = await webrefCss.listAll();
+        return data;
+      } catch (error) {
+        console.error('Error loading CSS data:', error);
+        return { properties: [], functions: [], types: [], selectors: [], atrules: [] };
+      }
+    })();
   }
-
-  try {
-    const webrefCss = require('@webref/css');
-    const data: CSSData = await webrefCss.listAll();
-    cssCache = data;
-    return data;
-  } catch (error) {
-    console.error('Error loading CSS data:', error);
-    return { properties: [], functions: [], types: [], selectors: [], atrules: [] };
-  }
+  return cssPromise;
 }
 
-// Cache for elements data
+// ============================================
+// Elements Data Types
+// ============================================
+
 export interface ElementDef {
   name: string;
   href?: string;
@@ -136,45 +176,51 @@ export interface ElementSpecData {
   elements: ElementDef[];
 }
 
-let elementsCache: Record<string, ElementSpecData> | null = null;
-
+/**
+ * Load elements data with singleton promise pattern
+ */
 export async function loadElements(): Promise<Record<string, ElementSpecData>> {
-  if (elementsCache) {
-    return elementsCache;
+  if (!elementsPromise) {
+    elementsPromise = (async () => {
+      try {
+        const webrefElements = require('@webref/elements');
+        const data: Record<string, ElementSpecData> = await webrefElements.listAll();
+        return data;
+      } catch (error) {
+        console.error('Error loading elements data:', error);
+        return {};
+      }
+    })();
   }
-
-  try {
-    const webrefElements = require('@webref/elements');
-    const data: Record<string, ElementSpecData> = await webrefElements.listAll();
-    elementsCache = data;
-    return data;
-  } catch (error) {
-    console.error('Error loading elements data:', error);
-    return {};
-  }
+  return elementsPromise;
 }
 
+// ============================================
+// Preload function for warming up cache
+// ============================================
+
 /**
- * Find a spec by shortname
+ * Preload all data in parallel
+ * Call this at server startup for better first-request performance
  */
-export async function findSpec(shortname: string): Promise<SpecDetail | undefined> {
-  const specs = await loadSpecs();
+export async function preloadAll(): Promise<void> {
+  await Promise.all([
+    loadSpecs(),
+    loadWebIDLRaw(),
+    loadCSS(),
+    loadElements()
+  ]);
+}
 
-  // Try exact match first
-  let spec = specs.find(s => s.shortname === shortname);
+// ============================================
+// Cache invalidation (for testing/development)
+// ============================================
 
-  if (!spec) {
-    // Try series shortname match
-    spec = specs.find(s => s.series?.shortname === shortname);
-  }
-
-  if (!spec) {
-    // Try partial match
-    spec = specs.find(s =>
-      s.shortname.includes(shortname) ||
-      shortname.includes(s.shortname)
-    );
-  }
-
-  return spec;
+export function clearCache(): void {
+  specsPromise = null;
+  idlPromise = null;
+  cssPromise = null;
+  elementsPromise = null;
+  specsIndex = null;
+  seriesIndex = null;
 }
