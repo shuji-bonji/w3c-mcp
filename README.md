@@ -1,6 +1,6 @@
 # W3C MCP Server
 
-[![npm version](https://img.shields.io/npm/v/@shuji-bonji/w3c-mcp-server.svg)](https://www.npmjs.com/package/@shuji-bonji/w3c-mcp-server)
+[![npm version](https://img.shields.io/npm/v/@shuji-bonji/w3c-mcp.svg)](https://www.npmjs.com/package/@shuji-bonji/w3c-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-blue.svg)](https://modelcontextprotocol.io/)
@@ -11,13 +11,13 @@ MCP Server for accessing W3C/WHATWG/IETF web specifications. Provides AI assista
 ## Installation
 
 ```bash
-npm install -g @shuji-bonji/w3c-mcp-server
+npm install -g @shuji-bonji/w3c-mcp
 ```
 
 Or use directly with npx:
 
 ```bash
-npx @shuji-bonji/w3c-mcp-server
+npx @shuji-bonji/w3c-mcp
 ```
 
 ## Configuration
@@ -34,7 +34,7 @@ Add to your Claude Desktop configuration file:
   "mcpServers": {
     "w3c": {
       "command": "npx",
-      "args": ["-y", "@shuji-bonji/w3c-mcp-server"]
+      "args": ["-y", "@shuji-bonji/w3c-mcp"]
     }
   }
 }
@@ -49,7 +49,7 @@ Add to your Cursor MCP settings (`.cursor/mcp.json` in your project or global se
   "mcpServers": {
     "w3c": {
       "command": "npx",
-      "args": ["-y", "@shuji-bonji/w3c-mcp-server"]
+      "args": ["-y", "@shuji-bonji/w3c-mcp"]
     }
   }
 }
@@ -179,10 +179,10 @@ Enable debug logging with environment variables:
 
 ```bash
 # Enable debug logging
-W3C_MCP_DEBUG=true npx @shuji-bonji/w3c-mcp-server
+W3C_MCP_DEBUG=true npx @shuji-bonji/w3c-mcp
 
 # Enable performance logging only
-W3C_MCP_PERF=true npx @shuji-bonji/w3c-mcp-server
+W3C_MCP_PERF=true npx @shuji-bonji/w3c-mcp
 ```
 
 Debug output includes:
@@ -225,8 +225,8 @@ src/
 
 ```bash
 # Clone the repository
-git clone https://github.com/shuji-bonji/w3c-mcp-server.git
-cd w3c-mcp-server
+git clone https://github.com/shuji-bonji/w3c-mcp.git
+cd w3c-mcp
 
 # Install dependencies
 npm install

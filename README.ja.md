@@ -1,6 +1,6 @@
 # W3C MCP Server
 
-[![npm version](https://img.shields.io/npm/v/@shuji-bonji/w3c-mcp-server.svg)](https://www.npmjs.com/package/@shuji-bonji/w3c-mcp-server)
+[![npm version](https://img.shields.io/npm/v/@shuji-bonji/w3c-mcp.svg)](https://www.npmjs.com/package/@shuji-bonji/w3c-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-blue.svg)](https://modelcontextprotocol.io/)
@@ -11,13 +11,13 @@ W3C/WHATWG/IETF の Web 仕様にアクセスするための MCP Server です�
 ## インストール
 
 ```bash
-npm install -g @shuji-bonji/w3c-mcp-server
+npm install -g @shuji-bonji/w3c-mcp
 ```
 
 または npx で直接実行:
 
 ```bash
-npx @shuji-bonji/w3c-mcp-server
+npx @shuji-bonji/w3c-mcp
 ```
 
 ## 設定
@@ -34,7 +34,7 @@ Claude Desktop の設定ファイルに追加してください:
   "mcpServers": {
     "w3c": {
       "command": "npx",
-      "args": ["-y", "@shuji-bonji/w3c-mcp-server"]
+      "args": ["-y", "@shuji-bonji/w3c-mcp"]
     }
   }
 }
@@ -49,7 +49,7 @@ Cursor の MCP 設定（プロジェクトの `.cursor/mcp.json` またはグロ
   "mcpServers": {
     "w3c": {
       "command": "npx",
-      "args": ["-y", "@shuji-bonji/w3c-mcp-server"]
+      "args": ["-y", "@shuji-bonji/w3c-mcp"]
     }
   }
 }
@@ -179,10 +179,10 @@ search_w3c_specs で query "storage" を指定してストレージ関連の仕�
 
 ```bash
 # デバッグログを有効化
-W3C_MCP_DEBUG=true npx @shuji-bonji/w3c-mcp-server
+W3C_MCP_DEBUG=true npx @shuji-bonji/w3c-mcp
 
 # パフォーマンスログのみ有効化
-W3C_MCP_PERF=true npx @shuji-bonji/w3c-mcp-server
+W3C_MCP_PERF=true npx @shuji-bonji/w3c-mcp
 ```
 
 デバッグ出力には以下が含まれます:
@@ -225,8 +225,8 @@ src/
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/shuji-bonji/w3c-mcp-server.git
-cd w3c-mcp-server
+git clone https://github.com/shuji-bonji/w3c-mcp.git
+cd w3c-mcp
 
 # 依存関係をインストール
 npm install

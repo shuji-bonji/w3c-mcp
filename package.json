@@ -1,11 +1,11 @@
 {
-	"name": "@shuji-bonji/w3c-mcp-server",
-	"version": "0.2.3",
+	"name": "@shuji-bonji/w3c-mcp",
+	"version": "0.1.0",
 	"description": "MCP Server for accessing W3C Web specifications",
 	"type": "module",
 	"main": "dist/index.js",
 	"bin": {
-		"w3c-mcp-server": "dist/index.js"
+		"w3c-mcp": "dist/index.js"
 	},
 	"scripts": {
 		"build": "tsc",
@@ -38,12 +38,12 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/shuji-bonji/w3c-mcp-server.git"
+		"url": "git+https://github.com/shuji-bonji/w3c-mcp.git"
 	},
 	"bugs": {
-		"url": "https://github.com/shuji-bonji/w3c-mcp-server/issues"
+		"url": "https://github.com/shuji-bonji/w3c-mcp/issues"
 	},
-	"homepage": "https://github.com/shuji-bonji/w3c-mcp-server#readme",
+	"homepage": "https://github.com/shuji-bonji/w3c-mcp#readme",
 	"files": [
 		"dist"
 	],
