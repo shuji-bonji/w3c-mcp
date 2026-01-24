@@ -8,34 +8,31 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-
-import { listSpecs } from './tools/list-specs.js';
-import { getSpec, getSpecDependencies } from './tools/get-spec.js';
-import { searchSpecs } from './tools/search-specs.js';
-import { getWebIDL, listWebIDLSpecs } from './tools/get-webidl.js';
-import { getCSSProperties, searchCSSProperty, listCSSSpecs } from './tools/get-css.js';
-import { getElements, searchElement, listElementSpecs } from './tools/get-elements.js';
-import { getPwaSpecs, getCorePwaSpecs } from './tools/get-pwa-specs.js';
 import { preloadAll } from './data/loader.js';
-
+// Error handling
+import { formatErrorResponse, ValidationError } from './errors/index.js';
 // Validation schemas
 import {
-	ListSpecsSchema,
-	GetSpecSchema,
-	SearchSpecsSchema,
-	GetWebIDLSchema,
 	GetCSSPropertiesSchema,
 	GetElementsSchema,
 	GetPwaSpecsSchema,
 	GetSpecDependenciesSchema,
+	GetSpecSchema,
+	GetWebIDLSchema,
+	ListSpecsSchema,
+	SearchSpecsSchema,
 	validateInput,
 } from './schemas/index.js';
-
-// Error handling
-import { formatErrorResponse, ValidationError } from './errors/index.js';
+import { getCSSProperties, listCSSSpecs, searchCSSProperty } from './tools/get-css.js';
+import { getElements, listElementSpecs, searchElement } from './tools/get-elements.js';
+import { getCorePwaSpecs, getPwaSpecs } from './tools/get-pwa-specs.js';
+import { getSpec, getSpecDependencies } from './tools/get-spec.js';
+import { getWebIDL, listWebIDLSpecs } from './tools/get-webidl.js';
+import { listSpecs } from './tools/list-specs.js';
+import { searchSpecs } from './tools/search-specs.js';
 
 // Logging
-import { info, debug, logToolCall, logToolResult, PerformanceTimer } from './utils/logger.js';
+import { info, logToolCall, logToolResult, PerformanceTimer } from './utils/logger.js';
 
 const server = new Server(
 	{
