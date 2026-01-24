@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-01-24
+
+### Added
+
+- **Test Suite**: Comprehensive test coverage with Vitest (163 tests)
+  - Unit tests for all data loaders and tools
+  - Integration tests for MCP server functionality
+  - ~82% code coverage
+- **Biome**: Fast linter and formatter for code quality
+  - ESLint + Prettier replacement
+  - Configured with TypeScript support
+
+### Changed
+
+- Code cleanup via Biome auto-fixes (unused imports, `node:` protocol, etc.)
+
 ## [0.2.0] - 2025-01-24
 
 ### Added

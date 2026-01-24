@@ -213,6 +213,12 @@ src/
 │   └── logger.ts     # Debug logging utilities
 └── types/
     └── index.ts      # TypeScript type definitions
+
+tests/
+├── setup.ts          # Test setup
+├── data/             # Data loader tests
+├── tools/            # Tool tests
+└── integration/      # MCP server integration tests
 ```
 
 ### Performance
@@ -239,6 +245,21 @@ npm run dev
 
 # Run with debug logging
 W3C_MCP_DEBUG=true npm start
+
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+
+# Lint + format (auto-fix)
+npm run check
 ```
 
 ## License
