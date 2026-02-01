@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2026-02-01
+
+### Fixed
+
+- **`get-webidl.ts`**: Multiple match case now uses `WebIDLNotFoundError` with suggestions
+  - Previously used generic `Error`, now LLM receives suggestions for exact shortnames
+- **`getSpecDependencies`**: Now uses `SpecNotFoundError` with suggestions
+  - Previously used generic `Error`, matching the pattern in `getSpec()`
+- **`formatErrorResponse`**: Added proper handling for `WebIDLNotFoundError` suggestions
+  - Previously `WebIDLNotFoundError` suggestions were not included in error response
+
+### Changed
+
+- **`WebIDLNotFoundError`**: Added `multipleMatch` parameter for accurate error messages
+- **`get_spec_dependencies` tool description**: Updated to clarify that dependency data is not yet available from upstream data source
+
 ## [0.1.4] - 2026-02-01
 
 ### Changed

@@ -31,15 +31,20 @@ export class SpecNotFoundError extends W3CMCPError {
 }
 
 /**
- * WebIDL not found error
+ * WebIDL not found error (also used for multiple matches)
  */
 export class WebIDLNotFoundError extends W3CMCPError {
 	public suggestions?: string[];
 
-	constructor(shortname: string, suggestions?: string[]) {
-		const message = suggestions?.length
-			? `WebIDL not found for "${shortname}". Specs with WebIDL that might match: ${suggestions.join(', ')}`
-			: `WebIDL not found for "${shortname}". This specification might not have WebIDL definitions.`;
+	constructor(shortname: string, suggestions?: string[], multipleMatch?: boolean) {
+		let message: string;
+		if (multipleMatch && suggestions?.length) {
+			message = `Multiple WebIDL matches found for "${shortname}": ${suggestions.join(', ')}. Please specify the exact shortname.`;
+		} else if (suggestions?.length) {
+			message = `WebIDL not found for "${shortname}". Specs with WebIDL that might match: ${suggestions.join(', ')}`;
+		} else {
+			message = `WebIDL not found for "${shortname}". This specification might not have WebIDL definitions.`;
+		}
 		super(message);
 		this.name = 'WebIDLNotFoundError';
 		this.suggestions = suggestions;
@@ -117,6 +122,21 @@ export function formatErrorResponse(error: unknown): { text: string; errorType: 
 				2,
 			),
 			errorType: 'SpecNotFoundError',
+		};
+	}
+
+	if (error instanceof WebIDLNotFoundError) {
+		return {
+			text: JSON.stringify(
+				{
+					error: 'WebIDLNotFoundError',
+					message: error.message,
+					suggestions: error.suggestions,
+				},
+				null,
+				2,
+			),
+			errorType: 'WebIDLNotFoundError',
 		};
 	}
 

@@ -52,7 +52,17 @@ export async function getSpecDependencies(shortname: string): Promise<Dependency
 	const spec = specs.find((s) => s.shortname === shortname);
 
 	if (!spec) {
-		throw new Error(`Specification "${shortname}" not found.`);
+		const suggestions = specs
+			.filter(
+				(s) =>
+					s.shortname.includes(shortname) ||
+					shortname.includes(s.shortname) ||
+					s.title.toLowerCase().includes(shortname.toLowerCase()),
+			)
+			.slice(0, 5)
+			.map((s) => s.shortname);
+
+		throw new SpecNotFoundError(shortname, suggestions.length > 0 ? suggestions : undefined);
 	}
 
 	// Note: web-specs doesn't include explicit dependency data

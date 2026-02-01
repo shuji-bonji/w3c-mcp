@@ -34,10 +34,7 @@ export async function getWebIDL(shortname: string): Promise<string> {
 	}
 
 	if (matchingKeys.length > 1) {
-		throw new Error(
-			`Multiple WebIDL matches found for "${shortname}": ${matchingKeys.join(', ')}. ` +
-				'Please specify the exact shortname.',
-		);
+		throw new WebIDLNotFoundError(shortname, matchingKeys, true);
 	}
 
 	// No match found

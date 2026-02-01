@@ -215,7 +215,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 		{
 			name: 'get_spec_dependencies',
 			description:
-				'Get dependency information for a specification (which specs it depends on and which depend on it)',
+				'Get basic information for a specification. Note: Dependency data (dependencies/dependents) is not yet available from the upstream data source and currently returns empty arrays.',
 			inputSchema: {
 				type: 'object',
 				properties: {
