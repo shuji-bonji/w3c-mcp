@@ -3,6 +3,7 @@
  */
 
 import { loadElements } from '../data/loader.js';
+import { ElementsNotFoundError } from '../errors/index.js';
 import type { ElementDefinition } from '../types/index.js';
 
 export async function getElements(specShortname?: string): Promise<ElementDefinition[]> {
@@ -15,10 +16,7 @@ export async function getElements(specShortname?: string): Promise<ElementDefini
 
 		if (!specData) {
 			const availableSpecs = Object.keys(elementsData);
-			throw new Error(
-				`Elements data not found for "${specShortname}". ` +
-					`Available specs: ${availableSpecs.join(', ')}`,
-			);
+			throw new ElementsNotFoundError(specShortname, availableSpecs);
 		}
 
 		for (const elem of specData.elements) {

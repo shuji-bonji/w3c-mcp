@@ -3,6 +3,7 @@
  */
 
 import { findSpec, loadSpecs, loadWebIDLRaw } from '../data/loader.js';
+import { WebIDLNotFoundError } from '../errors/index.js';
 
 export async function getWebIDL(shortname: string): Promise<string> {
 	const idlData = await loadWebIDLRaw();
@@ -52,12 +53,7 @@ export async function getWebIDL(shortname: string): Promise<string> {
 		.slice(0, 5)
 		.map((s) => s.shortname);
 
-	throw new Error(
-		`WebIDL not found for "${shortname}".` +
-			(suggestions.length > 0
-				? ` Specs with WebIDL that might match: ${suggestions.join(', ')}`
-				: ' This specification might not have WebIDL definitions.'),
-	);
+	throw new WebIDLNotFoundError(shortname, suggestions.length > 0 ? suggestions : undefined);
 }
 
 /**

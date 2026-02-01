@@ -1,6 +1,6 @@
 {
 	"name": "@shuji-bonji/w3c-mcp",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "MCP Server for accessing W3C Web specifications",
 	"type": "module",
 	"main": "dist/index.js",
@@ -22,10 +22,10 @@
 	},
 	"dependencies": {
 		"@modelcontextprotocol/sdk": "^1.0.0",
-		"@webref/css": "latest",
-		"@webref/elements": "latest",
-		"@webref/idl": "latest",
-		"web-specs": "latest",
+		"@webref/css": "^8.2.1",
+		"@webref/elements": "^2.6.1",
+		"@webref/idl": "^3.71.1",
+		"web-specs": "^3.76.0",
 		"zod": "^3.23.0"
 	},
 	"devDependencies": {

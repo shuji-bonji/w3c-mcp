@@ -210,7 +210,8 @@ src/
 ├── errors/
 │   └── index.ts      # Custom error classes
 ├── utils/
-│   └── logger.ts     # Debug logging utilities
+│   ├── logger.ts     # Debug logging utilities
+│   └── mapper.ts     # Spec data mapping utilities
 └── types/
     └── index.ts      # TypeScript type definitions
 

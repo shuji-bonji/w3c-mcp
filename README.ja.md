@@ -210,7 +210,8 @@ src/
 ├── errors/
 │   └── index.ts      # カスタムエラークラス
 ├── utils/
-│   └── logger.ts     # デバッグログユーティリティ
+│   ├── logger.ts     # デバッグログユーティリティ
+│   └── mapper.ts     # Spec データマッピングユーティリティ
 └── types/
     └── index.ts      # TypeScript 型定義
 ```

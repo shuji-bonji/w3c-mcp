@@ -4,6 +4,7 @@
 
 import { loadSpecs } from '../data/loader.js';
 import type { SpecSummary } from '../types/index.js';
+import { toSpecSummaries } from '../utils/mapper.js';
 
 /**
  * List of PWA-related specification shortnames and keywords
@@ -76,15 +77,7 @@ export async function getPwaSpecs(): Promise<SpecSummary[]> {
 		return a.title.localeCompare(b.title);
 	});
 
-	return pwaSpecs.map((spec) => ({
-		shortname: spec.shortname,
-		title: spec.title,
-		url: spec.url,
-		nightlyUrl: spec.nightly?.url,
-		organization: spec.organization,
-		status: spec.release?.status || spec.nightly?.status,
-		categories: spec.categories,
-	}));
+	return toSpecSummaries(pwaSpecs);
 }
 
 /**
@@ -101,13 +94,5 @@ export async function getCorePwaSpecs(): Promise<SpecSummary[]> {
 		),
 	);
 
-	return coreSpecs.map((spec) => ({
-		shortname: spec.shortname,
-		title: spec.title,
-		url: spec.url,
-		nightlyUrl: spec.nightly?.url,
-		organization: spec.organization,
-		status: spec.release?.status || spec.nightly?.status,
-		categories: spec.categories,
-	}));
+	return toSpecSummaries(coreSpecs);
 }

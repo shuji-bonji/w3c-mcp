@@ -5,10 +5,21 @@
  * Provides access to W3C/WHATWG/IETF web specifications via MCP protocol
  */
 
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { preloadAll } from './data/loader.js';
+
+// Load package.json for version info
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8')) as {
+	name: string;
+	version: string;
+};
+
 // Error handling
 import { formatErrorResponse, ValidationError } from './errors/index.js';
 // Validation schemas
@@ -36,8 +47,8 @@ import { info, logToolCall, logToolResult, PerformanceTimer } from './utils/logg
 
 const server = new Server(
 	{
-		name: 'w3c-mcp',
-		version: '0.1.0',
+		name: pkg.name,
+		version: pkg.version,
 	},
 	{
 		capabilities: {

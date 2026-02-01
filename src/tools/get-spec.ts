@@ -3,6 +3,7 @@
  */
 
 import { findSpec, loadSpecs } from '../data/loader.js';
+import { SpecNotFoundError } from '../errors/index.js';
 import type { DependencyInfo, SpecDetail } from '../types/index.js';
 
 export async function getSpec(shortname: string): Promise<SpecDetail | null> {
@@ -21,12 +22,7 @@ export async function getSpec(shortname: string): Promise<SpecDetail | null> {
 			.slice(0, 5)
 			.map((s) => s.shortname);
 
-		throw new Error(
-			`Specification "${shortname}" not found.` +
-				(suggestions.length > 0
-					? ` Did you mean: ${suggestions.join(', ')}?`
-					: ' Please check the shortname and try again.'),
-		);
+		throw new SpecNotFoundError(shortname, suggestions.length > 0 ? suggestions : undefined);
 	}
 
 	return {

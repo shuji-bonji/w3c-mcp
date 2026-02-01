@@ -4,6 +4,7 @@
 
 import { loadSpecs } from '../data/loader.js';
 import type { ListSpecsOptions, SpecSummary } from '../types/index.js';
+import { toSpecSummaries } from '../utils/mapper.js';
 
 export async function listSpecs(options: ListSpecsOptions = {}): Promise<SpecSummary[]> {
 	const { organization, keyword, category, limit = 50 } = options;
@@ -35,17 +36,6 @@ export async function listSpecs(options: ListSpecsOptions = {}): Promise<SpecSum
 		);
 	}
 
-	// Limit results
-	specs = specs.slice(0, limit);
-
-	// Map to summary format
-	return specs.map((spec) => ({
-		shortname: spec.shortname,
-		title: spec.title,
-		url: spec.url,
-		nightlyUrl: spec.nightly?.url,
-		organization: spec.organization,
-		status: spec.release?.status || spec.nightly?.status,
-		categories: spec.categories,
-	}));
+	// Limit results and map to summary format
+	return toSpecSummaries(specs.slice(0, limit));
 }

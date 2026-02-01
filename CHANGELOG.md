@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2026-02-01
+
+### Changed
+
+- **Custom Error Classes**: Now properly used in all tool implementations
+  - `get-spec.ts` uses `SpecNotFoundError` with suggestions
+  - `get-webidl.ts` uses `WebIDLNotFoundError` with suggestions
+  - `get-elements.ts` uses `ElementsNotFoundError` with limited suggestion count
+- **Dependency Versions**: Fixed versions for `@webref/*` and `web-specs` packages (previously `"latest"`)
+  - `@webref/css`: `^8.2.1`
+  - `@webref/elements`: `^2.6.1`
+  - `@webref/idl`: `^3.71.1`
+  - `web-specs`: `^3.76.0`
+- **Server Version**: Now dynamically loaded from `package.json`
+
+### Added
+
+- **Utility Functions**: `toSpecSummary()` and `toSpecSummaries()` in `src/utils/mapper.ts`
+  - Consolidates SpecSummary mapping logic from 4 different files
+
+### Fixed
+
+- `ElementsNotFoundError` now limits available specs to 10 in error message (prevents overly long messages)
+- Removed unused `_foundPerfectMatch` variable in `search-specs.ts`
+
 ## [0.1.2] - 2025-01-24
 
 ### Added

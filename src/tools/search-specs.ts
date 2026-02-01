@@ -9,6 +9,7 @@
 
 import { loadSpecs } from '../data/loader.js';
 import type { SpecSearchResult } from '../types/index.js';
+import { toSpecSummary } from '../utils/mapper.js';
 
 // Pre-compile common patterns
 const WORD_SPLIT_REGEX = /\s+/;
@@ -20,9 +21,6 @@ export async function searchSpecs(query: string, limit: number = 20): Promise<Sp
 
 	const results: SpecSearchResult[] = [];
 
-	// Track if we found a perfect match - can optimize further iterations
-	let _foundPerfectMatch = false;
-
 	for (const spec of specs) {
 		const lowerShortname = spec.shortname.toLowerCase();
 		const lowerTitle = spec.title.toLowerCase();
@@ -30,11 +28,10 @@ export async function searchSpecs(query: string, limit: number = 20): Promise<Sp
 		let score = 0;
 		let matchType: 'title' | 'shortname' | 'description' = 'title';
 
-		// Exact shortname match (highest score) - early optimization
+		// Exact shortname match (highest score)
 		if (lowerShortname === lowerQuery) {
 			score = 100;
 			matchType = 'shortname';
-			_foundPerfectMatch = true;
 		}
 		// Shortname contains query
 		else if (lowerShortname.includes(lowerQuery)) {
@@ -88,12 +85,7 @@ export async function searchSpecs(query: string, limit: number = 20): Promise<Sp
 		// Only add results with meaningful scores
 		if (score > 0) {
 			results.push({
-				shortname: spec.shortname,
-				title: spec.title,
-				url: spec.url,
-				nightlyUrl: spec.nightly?.url,
-				organization: spec.organization,
-				status: spec.release?.status || spec.nightly?.status,
+				...toSpecSummary(spec),
 				matchType,
 				score,
 			});
@@ -117,13 +109,8 @@ export async function quickFindByShortname(shortname: string): Promise<SpecSearc
 	if (!spec) return null;
 
 	return {
-		shortname: spec.shortname,
-		title: spec.title,
-		url: spec.url,
-		nightlyUrl: spec.nightly?.url,
-		organization: spec.organization,
-		status: spec.release?.status || spec.nightly?.status,
-		matchType: 'shortname',
+		...toSpecSummary(spec),
+		matchType: 'shortname' as const,
 		score: 100,
 	};
 }

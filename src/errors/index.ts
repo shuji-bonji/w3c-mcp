@@ -34,11 +34,15 @@ export class SpecNotFoundError extends W3CMCPError {
  * WebIDL not found error
  */
 export class WebIDLNotFoundError extends W3CMCPError {
-	constructor(shortname: string) {
-		super(
-			`WebIDL not found for "${shortname}". This specification might not have WebIDL definitions.`,
-		);
+	public suggestions?: string[];
+
+	constructor(shortname: string, suggestions?: string[]) {
+		const message = suggestions?.length
+			? `WebIDL not found for "${shortname}". Specs with WebIDL that might match: ${suggestions.join(', ')}`
+			: `WebIDL not found for "${shortname}". This specification might not have WebIDL definitions.`;
+		super(message);
 		this.name = 'WebIDLNotFoundError';
+		this.suggestions = suggestions;
 	}
 }
 
@@ -61,7 +65,7 @@ export class CSSNotFoundError extends W3CMCPError {
 export class ElementsNotFoundError extends W3CMCPError {
 	constructor(spec: string, availableSpecs?: string[]) {
 		const message = availableSpecs?.length
-			? `Elements data not found for "${spec}". Available specs: ${availableSpecs.join(', ')}`
+			? `Elements data not found for "${spec}". Available specs: ${availableSpecs.slice(0, 10).join(', ')}${availableSpecs.length > 10 ? '...' : ''}`
 			: `Elements data not found for "${spec}".`;
 		super(message);
 		this.name = 'ElementsNotFoundError';
