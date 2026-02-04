@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.6] - 2026-02-05
+
+### Added
+
+- **`src/constants/index.ts`**: Centralized configuration constants
+  - `SEARCH_SCORES` - All search scoring values with `as const`
+  - `SearchScoreKey`, `SearchScoreValue` types for type-safe score access
+  - `PwaShortname`, `CorePwaShortname`, `PwaKeyword` types derived from const arrays
+  - `DEFAULT_LIST_LIMIT`, `MAX_LIST_LIMIT`, `DEFAULT_SEARCH_LIMIT`, `MAX_SEARCH_LIMIT`
+  - `CSSWG_URL_PATTERN`, `UNKNOWN_SPEC` for CSS URL parsing
+- **`src/utils/suggestions.ts`**: DRY extraction of suggestion generation
+  - `generateSpecSuggestions()` - Generate suggestions for spec lookups
+  - `generateWebIDLSuggestions()` - Generate suggestions for WebIDL lookups
+  - `toOptionalSuggestions()` - Convert empty arrays to undefined
+- **`src/utils/search.ts`**: Generic search utilities
+  - `filterByName<T>()` - Generic filter function for name-based search
+  - `normalizeElementName()` - Normalize element names (strip angle brackets)
+- **`ErrorResponse` interface**: Structured error response type in `src/errors/index.ts`
+
+### Changed
+
+- **Refactored tool implementations** to use centralized constants
+  - `search-specs.ts` - Uses `SEARCH_SCORES` constants
+  - `get-css.ts` - Uses `CSSWG_URL_PATTERN`, `UNKNOWN_SPEC`
+  - `get-pwa-specs.ts` - Uses `PWA_SHORTNAMES`, `CORE_PWA_SHORTNAMES`, `PWA_KEYWORDS`
+- **Refactored error handling** to use `toJsonResponse()` helper
+- **Improved type safety** with const assertions and derived types
+
+### Testing
+
+- Test coverage increased from 83.47% to **86.7%**
+- Test count increased from 163 to **190 tests**
+- `errors/index.ts` now has **100% coverage** (was 85.32%)
+- Added coverage tests for:
+  - `QUERY_CONTAINS_SHORTNAME` score branch
+  - `ALL_WORDS_MATCH` score branch
+  - Abstract/description matching
+  - All error class variations (`WebIDLNotFoundError`, `CSSNotFoundError`, `ElementsNotFoundError`)
+
 ## [0.1.5] - 2026-02-01
 
 ### Fixed

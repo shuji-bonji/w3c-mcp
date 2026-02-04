@@ -194,10 +194,12 @@ W3C_MCP_PERF=true npx @shuji-bonji/w3c-mcp
 
 ```
 src/
-├── index.ts          # MCP サーバーエントリポイント
+├── index.ts           # MCP サーバーエントリポイント
+├── constants/
+│   └── index.ts       # 定数の一元管理
 ├── data/
-│   └── loader.ts     # キャッシュ付きデータロード
-├── tools/            # ツール実装
+│   └── loader.ts      # キャッシュ付きデータロード
+├── tools/             # ツール実装
 │   ├── list-specs.ts
 │   ├── get-spec.ts
 │   ├── search-specs.ts
@@ -206,14 +208,16 @@ src/
 │   ├── get-elements.ts
 │   └── get-pwa-specs.ts
 ├── schemas/
-│   └── index.ts      # Zod バリデーションスキーマ
+│   └── index.ts       # Zod バリデーションスキーマ
 ├── errors/
-│   └── index.ts      # カスタムエラークラス
+│   └── index.ts       # カスタムエラークラス
 ├── utils/
-│   ├── logger.ts     # デバッグログユーティリティ
-│   └── mapper.ts     # Spec データマッピングユーティリティ
+│   ├── logger.ts      # デバッグログユーティリティ
+│   ├── mapper.ts      # Spec データマッピングユーティリティ
+│   ├── search.ts      # 汎用検索ユーティリティ
+│   └── suggestions.ts # サジェスト生成ユーティリティ
 └── types/
-    └── index.ts      # TypeScript 型定義
+    └── index.ts       # TypeScript 型定義
 ```
 
 ### パフォーマンス

@@ -217,10 +217,12 @@ Debug output includes:
 
 ```
 src/
-├── index.ts          # MCP server entry point
+├── index.ts           # MCP server entry point
+├── constants/
+│   └── index.ts       # Centralized configuration constants
 ├── data/
-│   └── loader.ts     # Data loading with caching
-├── tools/            # Tool implementations
+│   └── loader.ts      # Data loading with caching
+├── tools/             # Tool implementations
 │   ├── list-specs.ts
 │   ├── get-spec.ts
 │   ├── search-specs.ts
@@ -229,20 +231,22 @@ src/
 │   ├── get-elements.ts
 │   └── get-pwa-specs.ts
 ├── schemas/
-│   └── index.ts      # Zod validation schemas
+│   └── index.ts       # Zod validation schemas
 ├── errors/
-│   └── index.ts      # Custom error classes
+│   └── index.ts       # Custom error classes
 ├── utils/
-│   ├── logger.ts     # Debug logging utilities
-│   └── mapper.ts     # Spec data mapping utilities
+│   ├── logger.ts      # Debug logging utilities
+│   ├── mapper.ts      # Spec data mapping utilities
+│   ├── search.ts      # Generic search utilities
+│   └── suggestions.ts # Suggestion generation utilities
 └── types/
-    └── index.ts      # TypeScript type definitions
+    └── index.ts       # TypeScript type definitions
 
 tests/
-├── setup.ts          # Test setup
-├── data/             # Data loader tests
-├── tools/            # Tool tests
-└── integration/      # MCP server integration tests
+├── setup.ts           # Test setup
+├── data/              # Data loader tests
+├── tools/             # Tool tests
+└── integration/       # MCP server integration tests
 ```
 
 ### Performance
