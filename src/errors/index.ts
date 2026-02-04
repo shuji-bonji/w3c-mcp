@@ -3,6 +3,7 @@
  */
 
 import type { z } from 'zod';
+import { MAX_AVAILABLE_SPECS_DISPLAY } from '../constants/index.js';
 
 /**
  * Base class for W3C MCP errors
@@ -56,8 +57,9 @@ export class WebIDLNotFoundError extends W3CMCPError {
  */
 export class CSSNotFoundError extends W3CMCPError {
 	constructor(spec: string, availableSpecs?: string[]) {
-		const message = availableSpecs?.length
-			? `CSS data not found for "${spec}". Available CSS specs: ${availableSpecs.slice(0, 10).join(', ')}...`
+		const displaySpecs = availableSpecs?.slice(0, MAX_AVAILABLE_SPECS_DISPLAY);
+		const message = displaySpecs?.length
+			? `CSS data not found for "${spec}". Available CSS specs: ${displaySpecs.join(', ')}...`
 			: `CSS data not found for "${spec}".`;
 		super(message);
 		this.name = 'CSSNotFoundError';
@@ -69,8 +71,10 @@ export class CSSNotFoundError extends W3CMCPError {
  */
 export class ElementsNotFoundError extends W3CMCPError {
 	constructor(spec: string, availableSpecs?: string[]) {
-		const message = availableSpecs?.length
-			? `Elements data not found for "${spec}". Available specs: ${availableSpecs.slice(0, 10).join(', ')}${availableSpecs.length > 10 ? '...' : ''}`
+		const displaySpecs = availableSpecs?.slice(0, MAX_AVAILABLE_SPECS_DISPLAY);
+		const hasMore = availableSpecs && availableSpecs.length > MAX_AVAILABLE_SPECS_DISPLAY;
+		const message = displaySpecs?.length
+			? `Elements data not found for "${spec}". Available specs: ${displaySpecs.join(', ')}${hasMore ? '...' : ''}`
 			: `Elements data not found for "${spec}".`;
 		super(message);
 		this.name = 'ElementsNotFoundError';
@@ -92,66 +96,51 @@ export class ValidationError extends W3CMCPError {
 }
 
 /**
+ * Helper to create formatted JSON error response
+ */
+function toJsonResponse(
+	errorType: string,
+	payload: Record<string, unknown>,
+): { text: string; errorType: string } {
+	return {
+		text: JSON.stringify(payload, null, 2),
+		errorType,
+	};
+}
+
+/**
  * Format error response for MCP
  */
 export function formatErrorResponse(error: unknown): { text: string; errorType: string } {
 	if (error instanceof ValidationError) {
-		return {
-			text: JSON.stringify(
-				{
-					error: 'ValidationError',
-					message: error.message,
-					issues: error.zodError.issues,
-				},
-				null,
-				2,
-			),
-			errorType: 'ValidationError',
-		};
+		return toJsonResponse('ValidationError', {
+			error: 'ValidationError',
+			message: error.message,
+			issues: error.zodError.issues,
+		});
 	}
 
 	if (error instanceof SpecNotFoundError) {
-		return {
-			text: JSON.stringify(
-				{
-					error: 'SpecNotFoundError',
-					message: error.message,
-					suggestions: error.suggestions,
-				},
-				null,
-				2,
-			),
-			errorType: 'SpecNotFoundError',
-		};
+		return toJsonResponse('SpecNotFoundError', {
+			error: 'SpecNotFoundError',
+			message: error.message,
+			suggestions: error.suggestions,
+		});
 	}
 
 	if (error instanceof WebIDLNotFoundError) {
-		return {
-			text: JSON.stringify(
-				{
-					error: 'WebIDLNotFoundError',
-					message: error.message,
-					suggestions: error.suggestions,
-				},
-				null,
-				2,
-			),
-			errorType: 'WebIDLNotFoundError',
-		};
+		return toJsonResponse('WebIDLNotFoundError', {
+			error: 'WebIDLNotFoundError',
+			message: error.message,
+			suggestions: error.suggestions,
+		});
 	}
 
 	if (error instanceof W3CMCPError) {
-		return {
-			text: JSON.stringify(
-				{
-					error: error.name,
-					message: error.message,
-				},
-				null,
-				2,
-			),
-			errorType: error.name,
-		};
+		return toJsonResponse(error.name, {
+			error: error.name,
+			message: error.message,
+		});
 	}
 
 	if (error instanceof Error) {

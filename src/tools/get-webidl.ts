@@ -4,6 +4,7 @@
 
 import { findSpec, loadSpecs, loadWebIDLRaw } from '../data/loader.js';
 import { WebIDLNotFoundError } from '../errors/index.js';
+import { generateWebIDLSuggestions, toOptionalSuggestions } from '../utils/suggestions.js';
 
 export async function getWebIDL(shortname: string): Promise<string> {
 	const idlData = await loadWebIDLRaw();
@@ -37,20 +38,10 @@ export async function getWebIDL(shortname: string): Promise<string> {
 		throw new WebIDLNotFoundError(shortname, matchingKeys, true);
 	}
 
-	// No match found
+	// No match found - generate suggestions
 	const specs = await loadSpecs();
-	const suggestions = specs
-		.filter((s) => idlData[s.shortname])
-		.filter(
-			(s) =>
-				s.shortname.includes(shortname) ||
-				shortname.includes(s.shortname) ||
-				s.title.toLowerCase().includes(shortname.toLowerCase()),
-		)
-		.slice(0, 5)
-		.map((s) => s.shortname);
-
-	throw new WebIDLNotFoundError(shortname, suggestions.length > 0 ? suggestions : undefined);
+	const suggestions = generateWebIDLSuggestions(shortname, specs, idlData);
+	throw new WebIDLNotFoundError(shortname, toOptionalSuggestions(suggestions));
 }
 
 /**

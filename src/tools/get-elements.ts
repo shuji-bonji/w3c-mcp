@@ -5,6 +5,7 @@
 import { loadElements } from '../data/loader.js';
 import { ElementsNotFoundError } from '../errors/index.js';
 import type { ElementDefinition } from '../types/index.js';
+import { filterByName, normalizeElementName } from '../utils/search.js';
 
 export async function getElements(specShortname?: string): Promise<ElementDefinition[]> {
 	const elementsData = await loadElements();
@@ -50,11 +51,8 @@ export async function getElements(specShortname?: string): Promise<ElementDefini
  */
 export async function searchElement(elementName: string): Promise<ElementDefinition[]> {
 	const allElements = await getElements();
-	const lowerName = elementName.toLowerCase().replace(/^<|>$/g, '');
-
-	return allElements.filter(
-		(elem) => elem.name.toLowerCase() === lowerName || elem.name.toLowerCase().includes(lowerName),
-	);
+	const normalizedName = normalizeElementName(elementName);
+	return filterByName(allElements, normalizedName);
 }
 
 /**

@@ -2,75 +2,55 @@
  * Get all PWA-related specifications
  */
 
+import { CORE_PWA_SHORTNAMES, PWA_KEYWORDS, PWA_SHORTNAMES } from '../constants/index.js';
 import { loadSpecs } from '../data/loader.js';
 import type { SpecSummary } from '../types/index.js';
 import { toSpecSummaries } from '../utils/mapper.js';
 
 /**
- * List of PWA-related specification shortnames and keywords
+ * Check if a spec matches any of the given shortnames
  */
-const PWA_SHORTNAMES = [
-	'service-workers',
-	'appmanifest',
-	'push-api',
-	'notifications',
-	'background-fetch',
-	'background-sync',
-	'periodic-background-sync',
-	'badging',
-	'web-share',
-	'web-share-target',
-	'getinstalledrelatedapps',
-	'payment-handler',
-	'content-index',
-	'window-controls-overlay',
-	'file-handling',
-	'file-system-access',
-	'web-app-launch',
-	'protocol-handler',
-	'shortcuts',
-	'scope-extensions',
-];
+function matchesShortnames(
+	spec: { shortname: string; series?: { shortname?: string } },
+	shortnames: readonly string[],
+): boolean {
+	return shortnames.some(
+		(name) => spec.shortname.includes(name) || spec.series?.shortname?.includes(name),
+	);
+}
 
 /**
- * Additional keywords that might identify PWA-related specs
+ * Check if a spec is an exact match for any of the given shortnames
  */
-const PWA_KEYWORDS = [
-	'manifest',
-	'service worker',
-	'offline',
-	'install',
-	'background',
-	'push',
-	'notification',
-	'cache',
-	'storage',
-];
+function isExactMatch(
+	spec: { shortname: string; series?: { shortname?: string } },
+	shortnames: readonly string[],
+): boolean {
+	return (
+		shortnames.includes(spec.shortname) ||
+		(spec.series?.shortname !== undefined &&
+			shortnames.includes(spec.series.shortname as (typeof shortnames)[number]))
+	);
+}
 
 export async function getPwaSpecs(): Promise<SpecSummary[]> {
 	const allSpecs = await loadSpecs();
 
 	const pwaSpecs = allSpecs.filter((spec) => {
 		// Check if shortname matches known PWA specs
-		const matchesShortname = PWA_SHORTNAMES.some(
-			(name) => spec.shortname.includes(name) || spec.series?.shortname?.includes(name),
-		);
-
-		if (matchesShortname) return true;
+		if (matchesShortnames(spec, PWA_SHORTNAMES)) {
+			return true;
+		}
 
 		// Check if title contains PWA-related keywords
 		const lowerTitle = spec.title.toLowerCase();
-		const matchesKeyword = PWA_KEYWORDS.some((keyword) => lowerTitle.includes(keyword));
-
-		return matchesKeyword;
+		return PWA_KEYWORDS.some((keyword) => lowerTitle.includes(keyword));
 	});
 
 	// Sort by relevance (exact shortname matches first, then alphabetically)
 	pwaSpecs.sort((a, b) => {
-		const aExact =
-			PWA_SHORTNAMES.includes(a.shortname) || PWA_SHORTNAMES.includes(a.series?.shortname || '');
-		const bExact =
-			PWA_SHORTNAMES.includes(b.shortname) || PWA_SHORTNAMES.includes(b.series?.shortname || '');
+		const aExact = isExactMatch(a, PWA_SHORTNAMES);
+		const bExact = isExactMatch(b, PWA_SHORTNAMES);
 
 		if (aExact && !bExact) return -1;
 		if (!aExact && bExact) return 1;
@@ -84,15 +64,9 @@ export async function getPwaSpecs(): Promise<SpecSummary[]> {
  * Get the core PWA specifications (the most essential ones)
  */
 export async function getCorePwaSpecs(): Promise<SpecSummary[]> {
-	const coreShortnames = ['service-workers', 'appmanifest', 'push-api', 'notifications'];
-
 	const allSpecs = await loadSpecs();
 
-	const coreSpecs = allSpecs.filter((spec) =>
-		coreShortnames.some(
-			(name) => spec.shortname.includes(name) || spec.series?.shortname?.includes(name),
-		),
-	);
+	const coreSpecs = allSpecs.filter((spec) => matchesShortnames(spec, CORE_PWA_SHORTNAMES));
 
 	return toSpecSummaries(coreSpecs);
 }

@@ -2,17 +2,19 @@
  * Get CSS property and value definitions
  */
 
+import { CSSWG_URL_PATTERN, UNKNOWN_SPEC } from '../constants/index.js';
 import { loadCSS } from '../data/loader.js';
 import type { CSSProperty, CSSValue } from '../types/index.js';
+import { filterByName } from '../utils/search.js';
 
 /**
  * Extract spec shortname from href URL
  */
 function extractSpecFromHref(href?: string): string {
-	if (!href) return 'unknown';
+	if (!href) return UNKNOWN_SPEC;
 	// Extract spec name from URLs like https://drafts.csswg.org/css-grid-2/#propdef-grid
-	const match = href.match(/csswg\.org\/([^/]+)/);
-	return match ? match[1] : 'unknown';
+	const match = href.match(CSSWG_URL_PATTERN);
+	return match ? match[1] : UNKNOWN_SPEC;
 }
 
 export async function getCSSProperties(specShortname?: string): Promise<CSSProperty[]> {
@@ -72,11 +74,7 @@ export async function getCSSValues(specShortname?: string): Promise<CSSValue[]> 
  */
 export async function searchCSSProperty(propertyName: string): Promise<CSSProperty[]> {
 	const allProperties = await getCSSProperties();
-	const lowerName = propertyName.toLowerCase();
-
-	return allProperties.filter(
-		(prop) => prop.name.toLowerCase() === lowerName || prop.name.toLowerCase().includes(lowerName),
-	);
+	return filterByName(allProperties, propertyName);
 }
 
 /**
@@ -115,7 +113,7 @@ export async function listCSSSpecs(): Promise<string[]> {
 
 	for (const prop of cssData.properties) {
 		const spec = extractSpecFromHref(prop.href);
-		if (spec !== 'unknown') {
+		if (spec !== UNKNOWN_SPEC) {
 			specs.add(spec);
 		}
 	}

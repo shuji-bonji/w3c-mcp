@@ -3,13 +3,19 @@
  */
 
 import { z } from 'zod';
+import {
+	DEFAULT_LIST_LIMIT,
+	DEFAULT_SEARCH_LIMIT,
+	MAX_LIST_LIMIT,
+	MAX_SEARCH_LIMIT,
+} from '../constants/index.js';
 
 // List specs schema
 export const ListSpecsSchema = z.object({
 	organization: z.enum(['W3C', 'WHATWG', 'IETF', 'all']).optional(),
 	keyword: z.string().optional(),
 	category: z.string().optional(),
-	limit: z.number().min(1).max(500).optional().default(50),
+	limit: z.number().min(1).max(MAX_LIST_LIMIT).optional().default(DEFAULT_LIST_LIMIT),
 });
 
 export type ListSpecsInput = z.infer<typeof ListSpecsSchema>;
@@ -24,7 +30,7 @@ export type GetSpecInput = z.infer<typeof GetSpecSchema>;
 // Search specs schema
 export const SearchSpecsSchema = z.object({
 	query: z.string().min(1, 'query is required'),
-	limit: z.number().min(1).max(100).optional().default(20),
+	limit: z.number().min(1).max(MAX_SEARCH_LIMIT).optional().default(DEFAULT_SEARCH_LIMIT),
 });
 
 export type SearchSpecsInput = z.infer<typeof SearchSpecsSchema>;

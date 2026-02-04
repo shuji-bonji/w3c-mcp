@@ -5,24 +5,15 @@
 import { findSpec, loadSpecs } from '../data/loader.js';
 import { SpecNotFoundError } from '../errors/index.js';
 import type { DependencyInfo, SpecDetail } from '../types/index.js';
+import { generateSpecSuggestions, toOptionalSuggestions } from '../utils/suggestions.js';
 
 export async function getSpec(shortname: string): Promise<SpecDetail | null> {
 	const spec = await findSpec(shortname);
 
 	if (!spec) {
-		// Return suggestions for similar specs
 		const specs = await loadSpecs();
-		const suggestions = specs
-			.filter(
-				(s) =>
-					s.shortname.includes(shortname) ||
-					shortname.includes(s.shortname) ||
-					s.title.toLowerCase().includes(shortname.toLowerCase()),
-			)
-			.slice(0, 5)
-			.map((s) => s.shortname);
-
-		throw new SpecNotFoundError(shortname, suggestions.length > 0 ? suggestions : undefined);
+		const suggestions = generateSpecSuggestions(shortname, specs);
+		throw new SpecNotFoundError(shortname, toOptionalSuggestions(suggestions));
 	}
 
 	return {
@@ -52,17 +43,8 @@ export async function getSpecDependencies(shortname: string): Promise<Dependency
 	const spec = specs.find((s) => s.shortname === shortname);
 
 	if (!spec) {
-		const suggestions = specs
-			.filter(
-				(s) =>
-					s.shortname.includes(shortname) ||
-					shortname.includes(s.shortname) ||
-					s.title.toLowerCase().includes(shortname.toLowerCase()),
-			)
-			.slice(0, 5)
-			.map((s) => s.shortname);
-
-		throw new SpecNotFoundError(shortname, suggestions.length > 0 ? suggestions : undefined);
+		const suggestions = generateSpecSuggestions(shortname, specs);
+		throw new SpecNotFoundError(shortname, toOptionalSuggestions(suggestions));
 	}
 
 	// Note: web-specs doesn't include explicit dependency data
