@@ -96,12 +96,19 @@ export class ValidationError extends W3CMCPError {
 }
 
 /**
+ * Structured error response for MCP protocol
+ */
+export interface ErrorResponse {
+	/** JSON-formatted error text */
+	text: string;
+	/** Error type identifier */
+	errorType: string;
+}
+
+/**
  * Helper to create formatted JSON error response
  */
-function toJsonResponse(
-	errorType: string,
-	payload: Record<string, unknown>,
-): { text: string; errorType: string } {
+function toJsonResponse(errorType: string, payload: Record<string, unknown>): ErrorResponse {
 	return {
 		text: JSON.stringify(payload, null, 2),
 		errorType,
@@ -111,7 +118,7 @@ function toJsonResponse(
 /**
  * Format error response for MCP
  */
-export function formatErrorResponse(error: unknown): { text: string; errorType: string } {
+export function formatErrorResponse(error: unknown): ErrorResponse {
 	if (error instanceof ValidationError) {
 		return toJsonResponse('ValidationError', {
 			error: 'ValidationError',

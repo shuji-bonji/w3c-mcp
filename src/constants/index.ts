@@ -54,6 +54,12 @@ export const SEARCH_SCORES = {
 	ABSTRACT_PARTIAL_BONUS: 10,
 } as const;
 
+/** Type for search score keys */
+export type SearchScoreKey = keyof typeof SEARCH_SCORES;
+
+/** Type for search score values */
+export type SearchScoreValue = (typeof SEARCH_SCORES)[SearchScoreKey];
+
 // ============================================
 // String Matching
 // ============================================
@@ -105,6 +111,9 @@ export const PWA_SHORTNAMES = [
 	'scope-extensions',
 ] as const;
 
+/** Type for PWA specification shortnames */
+export type PwaShortname = (typeof PWA_SHORTNAMES)[number];
+
 /** Core PWA specification shortnames */
 export const CORE_PWA_SHORTNAMES = [
 	'service-workers',
@@ -112,6 +121,9 @@ export const CORE_PWA_SHORTNAMES = [
 	'push-api',
 	'notifications',
 ] as const;
+
+/** Type for core PWA specification shortnames */
+export type CorePwaShortname = (typeof CORE_PWA_SHORTNAMES)[number];
 
 /** Keywords that might identify PWA-related specs */
 export const PWA_KEYWORDS = [
@@ -125,3 +137,6 @@ export const PWA_KEYWORDS = [
 	'cache',
 	'storage',
 ] as const;
+
+/** Type for PWA keywords */
+export type PwaKeyword = (typeof PWA_KEYWORDS)[number];

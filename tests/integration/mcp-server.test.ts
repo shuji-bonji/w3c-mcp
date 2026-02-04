@@ -6,10 +6,13 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { clearCache, preloadAll } from '../../src/data/loader.js';
 import {
+	CSSNotFoundError,
+	ElementsNotFoundError,
 	formatErrorResponse,
 	SpecNotFoundError,
 	ValidationError,
 	W3CMCPError,
+	WebIDLNotFoundError,
 } from '../../src/errors/index.js';
 import {
 	GetCSSPropertiesSchema,
@@ -284,6 +287,74 @@ describe('Error Handling', () => {
 		it('should handle unknown error types', () => {
 			const response = formatErrorResponse('string error');
 			expect(response.errorType).toBe('UnknownError');
+		});
+	});
+
+	describe('WebIDLNotFoundError', () => {
+		it('should format error with suggestions', () => {
+			const error = new WebIDLNotFoundError('domx', ['dom', 'dom-parsing']);
+			const response = formatErrorResponse(error);
+			expect(response.errorType).toBe('WebIDLNotFoundError');
+			expect(response.text).toContain('suggestions');
+		});
+
+		it('should format error for multiple matches', () => {
+			const error = new WebIDLNotFoundError('css', ['css-animations', 'css-grid'], true);
+			expect(error.message).toContain('Multiple');
+			expect(error.message).toContain('Please specify');
+		});
+
+		it('should format error without suggestions', () => {
+			const error = new WebIDLNotFoundError('unknownspec');
+			expect(error.message).toContain('might not have WebIDL');
+		});
+	});
+
+	describe('CSSNotFoundError', () => {
+		it('should format error with available specs', () => {
+			const error = new CSSNotFoundError('unknownspec', ['css-grid-1', 'css-flexbox-1']);
+			expect(error.message).toContain('Available CSS specs');
+			expect(error.message).toContain('css-grid-1');
+		});
+
+		it('should format error without available specs', () => {
+			const error = new CSSNotFoundError('unknownspec');
+			expect(error.message).toContain('CSS data not found');
+			expect(error.message).not.toContain('Available');
+		});
+
+		it('should truncate long available specs list', () => {
+			const manySpecs = Array.from({ length: 20 }, (_, i) => `css-spec-${i}`);
+			const error = new CSSNotFoundError('unknownspec', manySpecs);
+			expect(error.message).toContain('...');
+			// Should only show first 10
+			expect(error.message).not.toContain('css-spec-15');
+		});
+	});
+
+	describe('ElementsNotFoundError', () => {
+		it('should format error with available specs', () => {
+			const error = new ElementsNotFoundError('unknownspec', ['html', 'svg']);
+			expect(error.message).toContain('Available specs');
+			expect(error.message).toContain('html');
+		});
+
+		it('should format error without available specs', () => {
+			const error = new ElementsNotFoundError('unknownspec');
+			expect(error.message).toContain('Elements data not found');
+			expect(error.message).not.toContain('Available');
+		});
+
+		it('should show ellipsis when more than 10 specs available', () => {
+			const manySpecs = Array.from({ length: 15 }, (_, i) => `spec-${i}`);
+			const error = new ElementsNotFoundError('unknownspec', manySpecs);
+			expect(error.message).toContain('...');
+		});
+
+		it('should not show ellipsis when 10 or fewer specs', () => {
+			const fewSpecs = Array.from({ length: 5 }, (_, i) => `spec-${i}`);
+			const error = new ElementsNotFoundError('unknownspec', fewSpecs);
+			expect(error.message).not.toContain('...');
 		});
 	});
 });
