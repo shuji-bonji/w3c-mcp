@@ -30,17 +30,28 @@ Add to your Claude Desktop configuration file:
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**Linux**: `~/.config/Claude/claude_desktop_config.json`
 
 ```json
 {
-	"mcpServers": {
-		"w3c": {
-			"command": "npx",
-			"args": ["-y", "@shuji-bonji/w3c-mcp"]
-		}
-	}
+  "mcpServers": {
+    "w3c": {
+      "command": "npx",
+      "args": ["-y", "@shuji-bonji/w3c-mcp"]
+    }
+  }
 }
 ```
+
+### Claude Code
+
+Add the server using the `claude mcp` CLI:
+
+```bash
+claude mcp add w3c -- npx -y @shuji-bonji/w3c-mcp
+```
+
+Or edit `~/.claude.json` / project-level `.mcp.json` manually with the same `mcpServers` block shown above.
 
 ### Cursor
 
@@ -48,12 +59,12 @@ Add to your Cursor MCP settings (`.cursor/mcp.json` in your project or global se
 
 ```json
 {
-	"mcpServers": {
-		"w3c": {
-			"command": "npx",
-			"args": ["-y", "@shuji-bonji/w3c-mcp"]
-		}
-	}
+  "mcpServers": {
+    "w3c": {
+      "command": "npx",
+      "args": ["-y", "@shuji-bonji/w3c-mcp"]
+    }
+  }
 }
 ```
 
@@ -145,7 +156,9 @@ Parameters:
 
 #### `get_spec_dependencies`
 
-Get dependency information for a specification.
+Get basic information for a specification.
+
+> **Note**: Dependency data (`dependencies` / `dependents`) is not yet exposed by the upstream [`web-specs`](https://www.npmjs.com/package/web-specs) package, so these fields currently return empty arrays. Only the base spec metadata is reliable for now.
 
 Parameters:
 

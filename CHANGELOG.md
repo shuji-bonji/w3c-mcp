@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.8] - 2026-04-15
+
+### Fixed
+
+- **README**: Documentation corrections and alignment with current implementation
+  - `get_spec_dependencies` description now matches the actual tool behavior (dependency data is not yet exposed by upstream `web-specs`; returns empty arrays)
+  - Added Linux path for `claude_desktop_config.json` (previously only macOS and Windows were documented)
+  - Added Claude Code (`claude mcp add`) setup instructions
+- **README.ja.md**: Resolved asymmetry with the English README
+  - Added a link back to the English README
+  - Added the `tests/` sub-tree to the architecture section
+  - Added missing development commands (`test`, `test:coverage`, `lint`, `format`, `check`)
+- **npm package**: Added `README.ja.md` to the `files` field in `package.json`
+  - The "日本語版 README" link on the npm page now resolves correctly (previously 404 on npm, only worked on GitHub)
+
 ## [0.1.7] - 2026-02-05
 
 ### Fixed
