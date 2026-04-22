@@ -31,21 +31,28 @@ jobs:
       - name: Type check
         run: npm run build
 
-      - name: Test startup
+      - name: Test startup (MCP initialize handshake)
         run: |
-          # For stdio-based MCP servers, we just verify it can start and load data
-          # The server will exit when stdin closes, which is expected behavior
-          echo '' | timeout 10s node dist/index.js 2>&1 | tee output.log || true
+          # Send a JSON-RPC initialize request over stdio and verify the server
+          # responds with a valid result. This is resilient to log string changes.
+          REQ='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"ci","version":"1.0"}}}'
+          RESPONSE=$(printf '%s\n' "$REQ" | timeout 30s node dist/index.js 2>stderr.log | head -n 1 || true)
 
-          # Check if the expected startup messages appear
-          if grep -q "W3C MCP Server: Data loaded" output.log; then
-            echo "✅ Server started and loaded data successfully"
-            exit 0
-          else
-            echo "❌ Server failed to start properly"
-            cat output.log
-            exit 1
-          fi
+          echo "---- stderr ----"
+          cat stderr.log || true
+          echo "---- stdout (first line) ----"
+          echo "$RESPONSE"
+
+          node -e '
+            const line = process.argv[1] || "";
+            if (!line) { console.error("No response from server"); process.exit(1); }
+            const r = JSON.parse(line);
+            if (r.error) { console.error("Server returned error:", r.error); process.exit(1); }
+            if (!r.result || !r.result.serverInfo || !r.result.serverInfo.name) {
+              console.error("Invalid initialize response shape:", line); process.exit(1);
+            }
+            console.log("Server responded: " + r.result.serverInfo.name + " v" + r.result.serverInfo.version);
+          ' "$RESPONSE"
 
   publish:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -54,7 +61,7 @@ jobs:
 
     permissions:
       contents: read
-      id-token: write
+      id-token: write # Required for npm Trusted Publisher (OIDC)
 
     steps:
       - name: Checkout
@@ -63,7 +70,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           registry-url: "https://registry.npmjs.org"
           cache: "npm"
 
@@ -73,7 +80,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Trusted Publisher requires npm >= 11.5.1, but Node 22 ships with npm 10.x.
+      # `npm install -g npm@latest` is known to fail intermittently on GitHub Actions
+      # runners (self-overwrite race → MODULE_NOT_FOUND), so we invoke a fresh npm
+      # via npx only for this step. No NODE_AUTH_TOKEN needed: authentication is
+      # performed via OIDC token exchange with npm Trusted Publisher.
+      # Set up at: https://www.npmjs.com/package/@shuji-bonji/w3c-mcp/access
       - name: Publish to npm
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx -y npm@latest publish --provenance --access public

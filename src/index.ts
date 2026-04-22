@@ -215,7 +215,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 		{
 			name: 'get_spec_dependencies',
 			description:
-				'Get basic information for a specification. Note: Dependency data (dependencies/dependents) is not yet available from the upstream data source and currently returns empty arrays.',
+				'[DEPRECATED] Returns only basic spec metadata with empty dependencies/dependents arrays (upstream web-specs does not expose dependency data). Scheduled for removal in the next major release — use get_w3c_spec instead.',
 			inputSchema: {
 				type: 'object',
 				properties: {

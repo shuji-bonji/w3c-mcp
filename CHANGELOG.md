@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.9] - 2026-04-23
+
+### Changed
+
+- **Release pipeline**: Migrated to npm Trusted Publisher (OIDC). No `NPM_TOKEN`
+  secret is required anymore; the publish job uses `id-token: write` +
+  `--provenance`. Because `npm` bundled with Node 22 is too old for Trusted
+  Publisher (needs `npm >= 11.5.1`), the publish step now shells out via
+  `npx -y npm@latest publish`.
+- **CI startup check**: The `Test startup` step no longer depends on log string
+  grep. It now sends a JSON-RPC `initialize` request over stdio and verifies
+  the server responds with a valid `result.serverInfo`, which is resilient to
+  future log-wording changes.
+- **`@biomejs/biome`**: Bumped from `^2.3.12` to `^2.4.12` to match the current
+  CLI (removes the `$schema` version mismatch info log on `npm run check`).
+
+### Deprecated
+
+- **`get_spec_dependencies` tool**: Marked as `[DEPRECATED]` in the tool
+  description and with a `@deprecated` JSDoc tag. Upstream `web-specs` does not
+  expose dependency-graph data, so this tool currently returns empty
+  `dependencies` / `dependents` arrays. It is scheduled for removal in the next
+  major release. Use `get_w3c_spec` for basic spec metadata instead.
+
+### Added
+
+- **Dependabot weekly updates** (`.github/dependabot.yml`): `@webref/*` and
+  `web-specs` are grouped into a single weekly PR; dev dependencies are grouped
+  separately; `github-actions` updates are tracked on the same weekly cadence.
+
+### Docs
+
+- **`CLAUDE.md`** trimmed from 94 → 65 lines. Removed sections that duplicate
+  `package.json` or are derivable from the filesystem (`Tech Stack`,
+  `Project Structure`, `Data Sources`, `Testing`). Added a `Release` section
+  documenting the Trusted Publisher flow and a `Constants and hardcoding`
+  convention block.
+
 ## [0.1.8] - 2026-04-15
 
 ### Fixed

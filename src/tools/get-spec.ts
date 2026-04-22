@@ -36,7 +36,12 @@ export async function getSpec(shortname: string): Promise<SpecDetail | null> {
 }
 
 /**
- * Get dependency information for a specification
+ * Get dependency information for a specification.
+ *
+ * @deprecated Upstream `web-specs` does not expose dependency graph data.
+ * This tool currently returns empty `dependencies` / `dependents` arrays and is
+ * scheduled for removal in the next major release. Use `get_w3c_spec` for
+ * basic spec metadata instead.
  */
 export async function getSpecDependencies(shortname: string): Promise<DependencyInfo> {
 	const specs = await loadSpecs();
