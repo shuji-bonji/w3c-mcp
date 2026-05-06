@@ -26,7 +26,7 @@
 		"@webref/elements": "^2.6.1",
 		"@webref/idl": "^3.71.1",
 		"web-specs": "^3.76.0",
-		"zod": "^3.23.0"
+		"zod": "^4.4.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.12",
