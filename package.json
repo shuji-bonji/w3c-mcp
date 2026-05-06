@@ -1,6 +1,6 @@
 {
 	"name": "@shuji-bonji/w3c-mcp",
-	"version": "0.1.9",
+	"version": "0.1.10",
 	"description": "MCP Server for accessing W3C Web specifications",
 	"type": "module",
 	"main": "dist/index.js",
@@ -60,6 +60,6 @@
 		"README.ja.md"
 	],
 	"engines": {
-		"node": ">=18.0.0"
+		"node": ">=22.0.0"
 	}
 }
