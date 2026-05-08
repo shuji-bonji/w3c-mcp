@@ -1,6 +1,6 @@
 {
 	"name": "@shuji-bonji/w3c-mcp",
-	"version": "0.1.10",
+	"version": "0.1.11",
 	"description": "MCP Server for accessing W3C Web specifications",
 	"type": "module",
 	"main": "dist/index.js",
@@ -8,7 +8,7 @@
 		"w3c-mcp": "dist/index.js"
 	},
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc && chmod +x dist/index.js",
 		"dev": "tsc --watch",
 		"start": "node dist/index.js",
 		"prepare": "npm run build",
