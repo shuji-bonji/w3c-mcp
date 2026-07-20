@@ -25,7 +25,7 @@
 		"@webref/css": "^8.2.1",
 		"@webref/elements": "^2.6.1",
 		"@webref/idl": "^3.71.1",
-		"web-specs": "^3.76.0",
+		"web-specs": "^4.6.0",
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
