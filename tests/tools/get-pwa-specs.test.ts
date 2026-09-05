@@ -3,6 +3,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import { PWA_SHORTNAMES } from '../../src/constants/index.js';
 import { getCorePwaSpecs, getPwaSpecs } from '../../src/tools/get-pwa-specs.js';
 
 describe('getPwaSpecs', () => {
@@ -63,19 +64,60 @@ describe('getPwaSpecs', () => {
 		});
 	});
 
-	describe('sorting', () => {
-		it('should prioritize exact PWA shortname matches', async () => {
+	describe('strict matching (default)', () => {
+		it('should only return specs listed in PWA_SHORTNAMES', async () => {
 			const specs = await getPwaSpecs();
-			// First few specs should be core PWA specs
-			const coreShortnames = ['service-workers', 'appmanifest', 'push-api', 'notifications'];
-			const firstFewSpecs = specs.slice(0, 10);
-			const hasCoreSpecs = firstFewSpecs.some((s) =>
-				coreShortnames.some(
-					(name) =>
-						s.shortname.includes(name) || s.title.toLowerCase().includes(name.replace('-', ' ')),
-				),
+			const allowed = new Set<string>(PWA_SHORTNAMES);
+			for (const spec of specs) {
+				expect(allowed.has(spec.shortname)).toBe(true);
+			}
+		});
+
+		it('should not include specs that merely contain a keyword in the title', async () => {
+			const specs = await getPwaSpecs();
+			const shortnames = specs.map((s) => s.shortname);
+			// "CSS Backgrounds", "Publication Manifest", "HTTP Cache-Control ..." are not PWA specs
+			expect(shortnames).not.toContain('css-backgrounds-3');
+			expect(shortnames).not.toContain('pub-manifest');
+			expect(shortnames).not.toContain('rfc5861');
+		});
+
+		it('should sort listed specs by title', async () => {
+			const specs = await getPwaSpecs();
+			const titles = specs.map((s) => s.title);
+			const sorted = [...titles].sort((a, b) => a.localeCompare(b));
+			expect(titles).toEqual(sorted);
+		});
+	});
+
+	describe('includeRelated', () => {
+		it('should return a superset of the default result', async () => {
+			const strict = await getPwaSpecs();
+			const related = await getPwaSpecs({ includeRelated: true });
+			expect(related.length).toBeGreaterThan(strict.length);
+			const relatedShortnames = new Set(related.map((s) => s.shortname));
+			for (const spec of strict) {
+				expect(relatedShortnames.has(spec.shortname)).toBe(true);
+			}
+		});
+
+		it('should list PWA specs first, then related specs', async () => {
+			const strict = await getPwaSpecs();
+			const related = await getPwaSpecs({ includeRelated: true });
+			expect(related.slice(0, strict.length).map((s) => s.shortname)).toEqual(
+				strict.map((s) => s.shortname),
 			);
-			expect(hasCoreSpecs).toBe(true);
+		});
+
+		it('should include storage specs as related', async () => {
+			const related = await getPwaSpecs({ includeRelated: true });
+			expect(related.map((s) => s.shortname)).toContain('storage');
+		});
+
+		it('should not contain duplicates', async () => {
+			const related = await getPwaSpecs({ includeRelated: true });
+			const shortnames = related.map((s) => s.shortname);
+			expect(new Set(shortnames).size).toBe(shortnames.length);
 		});
 	});
 });

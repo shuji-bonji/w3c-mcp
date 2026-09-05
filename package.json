@@ -1,65 +1,65 @@
 {
-	"name": "@shuji-bonji/w3c-mcp",
-	"version": "0.2.0",
-	"description": "MCP Server for accessing W3C Web specifications",
-	"type": "module",
-	"main": "dist/index.js",
-	"bin": {
-		"w3c-mcp": "dist/index.js"
-	},
-	"scripts": {
-		"build": "tsc && chmod +x dist/index.js",
-		"dev": "tsc --watch",
-		"start": "node dist/index.js",
-		"prepare": "npm run build",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"test:coverage": "vitest run --coverage",
-		"lint": "biome lint .",
-		"lint:fix": "biome lint --write .",
-		"format": "biome format --write .",
-		"check": "biome check --write ."
-	},
-	"dependencies": {
-		"@modelcontextprotocol/server": "^2.0.0",
-		"@webref/css": "^8.2.1",
-		"@webref/elements": "^2.6.1",
-		"@webref/idl": "^3.71.1",
-		"web-specs": "^4.10.0",
-		"zod": "^4.4.3"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.5.7",
-		"@types/node": "^22.20.1",
-		"@vitest/coverage-v8": "^3.2.4",
-		"typescript": "^7.0.2",
-		"vitest": "^3.0.0"
-	},
-	"keywords": [
-		"mcp",
-		"w3c",
-		"web-specs",
-		"webref",
-		"pwa",
-		"service-worker",
-		"web-standards"
-	],
-	"author": "shuji-bonji",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/shuji-bonji/w3c-mcp.git"
-	},
-	"bugs": {
-		"url": "https://github.com/shuji-bonji/w3c-mcp/issues"
-	},
-	"homepage": "https://github.com/shuji-bonji/w3c-mcp#readme",
-	"files": [
-		"dist",
-		"README.md",
-		"README.ja.md"
-	],
-	"engines": {
-		"node": ">=22.0.0"
-	}
+  "name": "@shuji-bonji/w3c-mcp",
+  "version": "0.3.0",
+  "description": "MCP Server for accessing W3C Web specifications",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "w3c-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x dist/index.js",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepare": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "check": "biome check --write ."
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.0.0",
+    "@webref/css": "^8.2.1",
+    "@webref/elements": "^2.6.1",
+    "@webref/idl": "^3.71.1",
+    "web-specs": "^4.10.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.7",
+    "@types/node": "^22.20.1",
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^7.0.2",
+    "vitest": "^3.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "w3c",
+    "web-specs",
+    "webref",
+    "pwa",
+    "service-worker",
+    "web-standards"
+  ],
+  "author": "shuji-bonji",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shuji-bonji/w3c-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shuji-bonji/w3c-mcp/issues"
+  },
+  "homepage": "https://github.com/shuji-bonji/w3c-mcp#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "README.ja.md"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  }
 }

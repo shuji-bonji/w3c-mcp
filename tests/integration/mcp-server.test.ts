@@ -198,6 +198,16 @@ describe('MCP Server Integration', () => {
 			}
 		});
 
+		it('should get related specs when includeRelated is true', async () => {
+			const validation = validateInput(GetPwaSpecsSchema, { includeRelated: true });
+			expect(validation.success).toBe(true);
+			if (validation.success) {
+				const strict = await getPwaSpecs();
+				const related = await getPwaSpecs({ includeRelated: validation.data.includeRelated });
+				expect(related.length).toBeGreaterThan(strict.length);
+			}
+		});
+
 		it('should get core PWA specs only', async () => {
 			const validation = validateInput(GetPwaSpecsSchema, { coreOnly: true });
 			expect(validation.success).toBe(true);

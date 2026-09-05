@@ -183,11 +183,13 @@ function createServer(): McpServer {
 		'get_pwa_specs',
 		{
 			description:
-				'Get all Progressive Web App (PWA) related specifications including Service Worker, Web App Manifest, Push API, Background Sync, etc.',
+				'Get Progressive Web App (PWA) specifications: Service Worker, Web App Manifest, Push API, Background Sync, Badging, Web Share, etc. Set includeRelated to also get storage/caching/offline specs.',
 			inputSchema: GetPwaSpecsSchema,
 		},
-		toolHandler<z.infer<typeof GetPwaSpecsSchema>>('get_pwa_specs', async ({ coreOnly }) =>
-			toJson(coreOnly ? await getCorePwaSpecs() : await getPwaSpecs()),
+		toolHandler<z.infer<typeof GetPwaSpecsSchema>>(
+			'get_pwa_specs',
+			async ({ coreOnly, includeRelated }) =>
+				toJson(coreOnly ? await getCorePwaSpecs() : await getPwaSpecs({ includeRelated })),
 		),
 	);
 
