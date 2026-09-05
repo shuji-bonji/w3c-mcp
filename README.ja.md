@@ -153,6 +153,9 @@ Progressive Web App (PWA) 関連の全仕様を取得します。
 パラメータ:
 
 - `coreOnly` (任意): true の場合、コア PWA 仕様のみ返す (Service Worker, Manifest, Push, Notifications)
+- `includeRelated` (任意): true の場合、タイトルに storage / cache / offline などを含む関連仕様 (Storage, Storage Buckets, Storage Access API など) も併せて返す。`coreOnly` が true のときは無視される。
+
+既定では `PWA_SHORTNAMES` (`src/constants/index.ts`) に列挙した仕様だけを shortname の完全一致で返します。
 
 ## 使用例
 
