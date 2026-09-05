@@ -21,7 +21,7 @@
 		"check": "biome check --write ."
 	},
 	"dependencies": {
-		"@modelcontextprotocol/sdk": "^1.0.0",
+		"@modelcontextprotocol/server": "^2.0.0",
 		"@webref/css": "^8.2.1",
 		"@webref/elements": "^2.6.1",
 		"@webref/idl": "^3.71.1",
