@@ -74,13 +74,6 @@ export interface AttributeDefinition {
 	description?: string;
 }
 
-export interface DependencyInfo {
-	shortname: string;
-	title: string;
-	dependencies: string[];
-	dependents: string[];
-}
-
 export interface ListSpecsOptions {
 	organization?: 'W3C' | 'WHATWG' | 'IETF' | 'all';
 	keyword?: string;

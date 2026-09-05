@@ -18,7 +18,6 @@ import {
 	GetCSSPropertiesSchema,
 	GetElementsSchema,
 	GetPwaSpecsSchema,
-	GetSpecDependenciesSchema,
 	GetSpecSchema,
 	GetWebIDLSchema,
 	ListSpecsSchema,
@@ -28,7 +27,7 @@ import {
 import { getCSSProperties, listCSSSpecs } from '../../src/tools/get-css.js';
 import { getElements, listElementSpecs } from '../../src/tools/get-elements.js';
 import { getCorePwaSpecs, getPwaSpecs } from '../../src/tools/get-pwa-specs.js';
-import { getSpec, getSpecDependencies } from '../../src/tools/get-spec.js';
+import { getSpec } from '../../src/tools/get-spec.js';
 import { getWebIDL, listWebIDLSpecs } from '../../src/tools/get-webidl.js';
 import { listSpecs } from '../../src/tools/list-specs.js';
 import { searchSpecs } from '../../src/tools/search-specs.js';
@@ -207,24 +206,6 @@ describe('MCP Server Integration', () => {
 				const allSpecs = await getPwaSpecs();
 				expect(result.length).toBeLessThanOrEqual(allSpecs.length);
 			}
-		});
-	});
-
-	describe('get_spec_dependencies tool', () => {
-		it('should get spec dependencies', async () => {
-			const validation = validateInput(GetSpecDependenciesSchema, { shortname: 'fetch' });
-			expect(validation.success).toBe(true);
-			if (validation.success) {
-				const result = await getSpecDependencies(validation.data.shortname);
-				expect(result).toHaveProperty('shortname');
-				expect(result).toHaveProperty('dependencies');
-				expect(result).toHaveProperty('dependents');
-			}
-		});
-
-		it('should require shortname', async () => {
-			const validation = validateInput(GetSpecDependenciesSchema, {});
-			expect(validation.success).toBe(false);
 		});
 	});
 });

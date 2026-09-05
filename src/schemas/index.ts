@@ -12,65 +12,99 @@ import {
 
 // List specs schema
 export const ListSpecsSchema = z.object({
-	organization: z.enum(['W3C', 'WHATWG', 'IETF', 'all']).optional(),
-	keyword: z.string().optional(),
-	category: z.string().optional(),
-	limit: z.number().min(1).max(MAX_LIST_LIMIT).optional().default(DEFAULT_LIST_LIMIT),
+	organization: z
+		.enum(['W3C', 'WHATWG', 'IETF', 'all'])
+		.optional()
+		.describe('Filter by standards organization'),
+	keyword: z.string().optional().describe('Filter by keyword in title or shortname'),
+	category: z.string().optional().describe('Filter by category (e.g., "browser")'),
+	limit: z
+		.number()
+		.min(1)
+		.max(MAX_LIST_LIMIT)
+		.optional()
+		.default(DEFAULT_LIST_LIMIT)
+		.describe(`Maximum number of results (default: ${DEFAULT_LIST_LIMIT})`),
 });
 
 export type ListSpecsInput = z.infer<typeof ListSpecsSchema>;
 
 // Get spec schema
 export const GetSpecSchema = z.object({
-	shortname: z.string().min(1, 'shortname is required'),
+	shortname: z
+		.string()
+		.min(1, 'shortname is required')
+		.describe('Specification shortname (e.g., "service-workers", "appmanifest", "fetch", "dom")'),
 });
 
 export type GetSpecInput = z.infer<typeof GetSpecSchema>;
 
 // Search specs schema
 export const SearchSpecsSchema = z.object({
-	query: z.string().min(1, 'query is required'),
-	limit: z.number().min(1).max(MAX_SEARCH_LIMIT).optional().default(DEFAULT_SEARCH_LIMIT),
+	query: z
+		.string()
+		.min(1, 'query is required')
+		.describe('Search query (e.g., "service worker", "manifest", "storage")'),
+	limit: z
+		.number()
+		.min(1)
+		.max(MAX_SEARCH_LIMIT)
+		.optional()
+		.default(DEFAULT_SEARCH_LIMIT)
+		.describe(`Maximum number of results (default: ${DEFAULT_SEARCH_LIMIT})`),
 });
 
 export type SearchSpecsInput = z.infer<typeof SearchSpecsSchema>;
 
 // Get WebIDL schema
 export const GetWebIDLSchema = z.object({
-	shortname: z.string().min(1, 'shortname is required'),
+	shortname: z
+		.string()
+		.min(1, 'shortname is required')
+		.describe('Specification shortname (e.g., "service-workers", "fetch", "dom")'),
 });
 
 export type GetWebIDLInput = z.infer<typeof GetWebIDLSchema>;
 
 // Get CSS properties schema
 export const GetCSSPropertiesSchema = z.object({
-	spec: z.string().optional(),
-	property: z.string().optional(),
+	spec: z
+		.string()
+		.optional()
+		.describe(
+			'Specification shortname (e.g., "css-grid-1", "css-flexbox-1"). If omitted, returns all CSS properties.',
+		),
+	property: z.string().optional().describe('Search for a specific CSS property by name'),
 });
 
 export type GetCSSPropertiesInput = z.infer<typeof GetCSSPropertiesSchema>;
 
 // Get elements schema
 export const GetElementsSchema = z.object({
-	spec: z.string().optional(),
-	element: z.string().optional(),
+	spec: z
+		.string()
+		.optional()
+		.describe('Specification shortname (e.g., "html", "svg"). If omitted, returns all elements.'),
+	element: z
+		.string()
+		.optional()
+		.describe('Search for a specific element by name (e.g., "video", "canvas")'),
 });
 
 export type GetElementsInput = z.infer<typeof GetElementsSchema>;
 
 // Get PWA specs schema
 export const GetPwaSpecsSchema = z.object({
-	coreOnly: z.boolean().optional().default(false),
+	coreOnly: z
+		.boolean()
+		.optional()
+		.default(false)
+		.describe(
+			'If true, return only the core PWA specs (Service Worker, Manifest, Push, Notifications)',
+		),
 });
 
 export type GetPwaSpecsInput = z.infer<typeof GetPwaSpecsSchema>;
-
-// Get spec dependencies schema
-export const GetSpecDependenciesSchema = z.object({
-	shortname: z.string().min(1, 'shortname is required'),
-});
-
-export type GetSpecDependenciesInput = z.infer<typeof GetSpecDependenciesSchema>;
 
 /**
  * Validate input against a schema

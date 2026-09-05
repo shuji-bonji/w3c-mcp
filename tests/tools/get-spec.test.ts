@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { getSpec, getSpecDependencies } from '../../src/tools/get-spec.js';
+import { getSpec } from '../../src/tools/get-spec.js';
 
 describe('getSpec', () => {
 	describe('basic functionality', () => {
@@ -87,31 +87,6 @@ describe('getSpec', () => {
 		it('should include organization', async () => {
 			const spec = await getSpec('fetch');
 			expect(spec).toHaveProperty('organization');
-		});
-	});
-});
-
-describe('getSpecDependencies', () => {
-	describe('basic functionality', () => {
-		it('should return dependency info for valid spec', async () => {
-			const deps = await getSpecDependencies('fetch');
-			expect(deps).toBeDefined();
-			expect(deps).toHaveProperty('shortname');
-			expect(deps).toHaveProperty('title');
-			expect(deps).toHaveProperty('dependencies');
-			expect(deps).toHaveProperty('dependents');
-		});
-
-		it('should return arrays for dependencies and dependents', async () => {
-			const deps = await getSpecDependencies('fetch');
-			expect(Array.isArray(deps.dependencies)).toBe(true);
-			expect(Array.isArray(deps.dependents)).toBe(true);
-		});
-	});
-
-	describe('error handling', () => {
-		it('should throw error for non-existent spec', async () => {
-			await expect(getSpecDependencies('nonexistent-spec-xyz123')).rejects.toThrow('not found');
 		});
 	});
 });
