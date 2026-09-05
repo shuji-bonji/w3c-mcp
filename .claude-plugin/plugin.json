@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/.claude-plugin/plugin.schema.json",
   "name": "w3c-mcp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "W3C Web 仕様参照 MCP server。仕様検索・WebIDL・CSS プロパティ・HTML 要素・PWA 関連仕様の取得を提供。",
   "author": {
     "name": "shuji-bonji",
@@ -24,10 +24,7 @@
   "mcpServers": {
     "w3c": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@shuji-bonji/w3c-mcp@latest"
-      ]
+      "args": ["-y", "@shuji-bonji/w3c-mcp@latest"]
     }
   }
 }

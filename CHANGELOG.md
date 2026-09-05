@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **`get_pwa_specs`**: By default the tool now returns only the specs listed in
+  `PWA_SHORTNAMES`, matched by exact shortname. Previously a substring match
+  plus title keywords (`manifest`, `background`, `storage`, ...) pulled in
+  unrelated specs such as `css-backgrounds-3`, `pub-manifest`,
+  `payment-method-manifest` and `rfc5861`. The keyword expansion is now opt-in
+  via the new `includeRelated` parameter (ignored when `coreOnly` is true);
+  related specs are appended after the listed PWA specs.
+- **`PWA_SHORTNAMES`**: Replaced entries that no longer exist in `web-specs`
+  (`getinstalledrelatedapps`, `payment-handler`, `file-handling`,
+  `protocol-handler`, `shortcuts`, `scope-extensions`) with the current
+  shortnames (`get-installed-related-apps`, `web-based-payment-handler`,
+  `manifest-incubations`, `manifest-app-info`).
+- **Dependabot**: `@types/node` major updates are ignored so the type
+  definitions stay aligned with the minimum supported Node (`engines.node`).
+
 ## [0.2.0] - 2026-09-05
 
 ### Changed

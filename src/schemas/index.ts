@@ -102,6 +102,13 @@ export const GetPwaSpecsSchema = z.object({
 		.describe(
 			'If true, return only the core PWA specs (Service Worker, Manifest, Push, Notifications)',
 		),
+	includeRelated: z
+		.boolean()
+		.optional()
+		.default(false)
+		.describe(
+			'If true, also include related specs whose title mentions storage, caching, offline, etc. (ignored when coreOnly is true)',
+		),
 });
 
 export type GetPwaSpecsInput = z.infer<typeof GetPwaSpecsSchema>;

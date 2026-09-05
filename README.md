@@ -153,6 +153,9 @@ Get all Progressive Web App (PWA) related specifications.
 Parameters:
 
 - `coreOnly` (optional): If true, return only the core PWA specs (Service Worker, Manifest, Push, Notifications)
+- `includeRelated` (optional): If true, also include related specs whose title mentions storage, caching, offline, etc. (Storage, Storage Buckets, Storage Access API, ...). Ignored when `coreOnly` is true.
+
+By default only the specs listed in `PWA_SHORTNAMES` (`src/constants/index.ts`) are returned, matched by exact shortname.
 
 ## Usage Examples
 

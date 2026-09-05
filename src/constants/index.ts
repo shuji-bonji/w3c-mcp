@@ -87,10 +87,16 @@ export const UNKNOWN_SPEC = 'unknown';
 // PWA Specifications
 // ============================================
 
-/** PWA-related specification shortnames */
+/**
+ * PWA-related specification shortnames.
+ * Every entry must be an exact `shortname` (or `series.shortname`) that exists
+ * in `web-specs`; matching is exact, not substring.
+ */
 export const PWA_SHORTNAMES = [
 	'service-workers',
 	'appmanifest',
+	'manifest-app-info',
+	'manifest-incubations',
 	'push-api',
 	'notifications',
 	'background-fetch',
@@ -99,16 +105,12 @@ export const PWA_SHORTNAMES = [
 	'badging',
 	'web-share',
 	'web-share-target',
-	'getinstalledrelatedapps',
-	'payment-handler',
+	'get-installed-related-apps',
+	'web-based-payment-handler',
 	'content-index',
 	'window-controls-overlay',
-	'file-handling',
 	'file-system-access',
 	'web-app-launch',
-	'protocol-handler',
-	'shortcuts',
-	'scope-extensions',
 ] as const;
 
 /** Type for PWA specification shortnames */
@@ -125,13 +127,15 @@ export const CORE_PWA_SHORTNAMES = [
 /** Type for core PWA specification shortnames */
 export type CorePwaShortname = (typeof CORE_PWA_SHORTNAMES)[number];
 
-/** Keywords that might identify PWA-related specs */
+/**
+ * Title keywords used only when `includeRelated` is requested. They pull in
+ * specs that are not PWA specs themselves but are commonly needed alongside
+ * them (storage, caching, offline).
+ */
 export const PWA_KEYWORDS = [
-	'manifest',
 	'service worker',
 	'offline',
 	'install',
-	'background',
 	'push',
 	'notification',
 	'cache',

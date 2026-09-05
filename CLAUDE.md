@@ -60,6 +60,9 @@ server version is read dynamically from `package.json` at startup
 `@webref/*` and `web-specs` ship frequent non-breaking updates; keep them on
 caret ranges (`^`) and let Dependabot open weekly PRs to follow upstream.
 
+`@types/node` tracks the minimum supported Node major (`engines.node`, currently
+22), not the newest Node. Dependabot is configured to ignore its major updates.
+
 TypeScript 7 (Go-based `tsc`) does not pick up `@types/*` automatically;
 `tsconfig.json` lists `"types": ["node"]` explicitly. Keep it when editing the
 config.
