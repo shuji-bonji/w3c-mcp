@@ -1,8 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/.claude-plugin/plugin.schema.json",
   "name": "w3c-mcp",
-  "version": "0.1.12",
-  "description": "W3C Web 仕様参照 MCP server。仕様検索・WebIDL・CSS プロパティ・HTML 要素・PWA 関連仕様・仕様間依存の取得を提供。",
+  "version": "0.2.0",
+  "description": "W3C Web 仕様参照 MCP server。仕様検索・WebIDL・CSS プロパティ・HTML 要素・PWA 関連仕様の取得を提供。",
   "author": {
     "name": "shuji-bonji",
     "email": "bonji@mikuro.jp",

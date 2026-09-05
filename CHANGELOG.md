@@ -5,14 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-09-05
+
+### Changed
+
+- **MCP SDK v2**: Migrated from `@modelcontextprotocol/sdk` (v1) to
+  `@modelcontextprotocol/server` `^2.0.0`. The server is now built on
+  `McpServer.registerTool()` with the zod schemas in `src/schemas/index.ts`;
+  the hand-written JSON Schema in `src/index.ts` and the `switch`-based
+  dispatcher are gone. `tools/list` publishes the JSON Schema generated from
+  zod (field descriptions are kept via `.describe()`).
+- **Protocol negotiation**: The server starts through `serveStdio()`, which
+  answers both the `initialize` opening (protocol revisions 2024-11-05 through
+  2025-11-25) and the `server/discover` opening introduced in revision
+  2026-07-28.
+- **Input validation**: The SDK validates tool arguments against the zod
+  schema before the handler runs. A validation failure is returned as an
+  `isError` text result whose wording comes from the SDK
+  (`Input validation error: ...`) instead of the previous
+  `{ "error": "ValidationError", ... }` JSON payload. Other errors
+  (`SpecNotFoundError`, `WebIDLNotFoundError`, ...) keep the same JSON format.
+- **TypeScript 7**: Build now uses the Go-based `tsc` (`typescript@^7.0.2`).
+  `tsconfig.json` gained `"types": ["node"]` because TypeScript 7 no longer
+  picks up `@types/*` automatically. `@types/node` bumped to `^22`. Emitted
+  JavaScript is identical to the TypeScript 5.9 output.
+
+### Removed
+
+- **`get_spec_dependencies` tool** (deprecated since 0.1.9). Upstream
+  `web-specs` never exposed dependency data, so the tool only ever returned
+  empty arrays. Use `get_w3c_spec` instead. The `getSpecDependencies()`
+  function, `DependencyInfo` type and `GetSpecDependenciesSchema` were removed
+  as well.
+
+## [0.1.12] - 2026-07-14
+
+### Added
+
+- **`.claude-plugin/plugin.json`**: Claude Code plugin manifest so the server
+  can be installed as a plugin (`mcpServers.w3c` runs
+  `npx -y @shuji-bonji/w3c-mcp@latest`).
+
+### Changed
+
+- **Biome 2.5**: Migrated `biome.json` (`recommended` → `preset`).
+- **CI**: `actions/checkout` bumped from 6 to 7.
+
+## [0.1.10] - 2026-05-06
+
+### Changed
+
+- **zod 4**: Bumped `zod` from `^3.25.76` to `^4.4.3`.
+- **`@webref/*` / `web-specs`**: Weekly Dependabot group update (3 packages).
+- **CI**: `actions/checkout` 4 → 6, `actions/setup-node` 4 → 6.
+
 ## [0.1.11] - 2026-05-09
 
 ### Build
 
 - **build script に `chmod +x dist/index.js` を追加**: local dev で `./dist/index.js` を直接実行した際の `permission denied` を回避。npm install / npx 経由の通常利用には影響なし (npm が install 時に bin を chmod するため)。shuji 製 MCP 全体で build script を統一。
 - **`biome.json` の `$schema` を 2.4.12 → 2.4.14 に更新**: ローカル CLI バージョンと一致させて `biome check` 時の info ログを解消。
-
-> Note: v0.1.10 の CHANGELOG エントリは抜けています (リリース時の追記漏れ)。後日 backfill 予定。
 
 ## [0.1.9] - 2026-04-23
 

@@ -154,16 +154,6 @@ Parameters:
 
 - `coreOnly` (optional): If true, return only the core PWA specs (Service Worker, Manifest, Push, Notifications)
 
-#### `get_spec_dependencies`
-
-Get basic information for a specification.
-
-> **Note**: Dependency data (`dependencies` / `dependents`) is not yet exposed by the upstream [`web-specs`](https://www.npmjs.com/package/web-specs) package, so these fields currently return empty arrays. Only the base spec metadata is reliable for now.
-
-Parameters:
-
-- `shortname` (required): Specification shortname
-
 ## Usage Examples
 
 ### Find Service Worker APIs

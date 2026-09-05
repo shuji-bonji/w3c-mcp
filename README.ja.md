@@ -154,16 +154,6 @@ Progressive Web App (PWA) 関連の全仕様を取得します。
 
 - `coreOnly` (任意): true の場合、コア PWA 仕様のみ返す (Service Worker, Manifest, Push, Notifications)
 
-#### `get_spec_dependencies`
-
-仕様の基本情報を取得します。
-
-> **Note**: 依存関係データ（`dependencies` / `dependents`）は上流の [`web-specs`](https://www.npmjs.com/package/web-specs) パッケージから現状公開されていないため、これらのフィールドは常に空配列を返します。現時点では仕様のメタデータのみ参考にしてください。
-
-パラメータ:
-
-- `shortname` (必須): 仕様の shortname
-
 ## 使用例
 
 ### Service Worker API を調べる
